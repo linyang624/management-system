@@ -31,9 +31,7 @@ export default function ProductListPage() {
     // so we do not directly modify the imported data
     let result = [...products];
 
-    // ---------------------------
-    // SEARCH FUNCTIONALITY
-    // ---------------------------
+
     // If the search box is not empty, filter the products
     // by checking whether the keyword exists in:
     // - product name
@@ -52,9 +50,6 @@ export default function ProductListPage() {
       });
     }
 
-    // ---------------------------
-    // SORT FUNCTIONALITY
-    // ---------------------------
     // Sort the filtered result depending on the selected option
     if (sortOrder === "lowToHigh") {
       result.sort((a, b) => a.price - b.price);
@@ -77,9 +72,7 @@ export default function ProductListPage() {
   );
 
   /**
-   * PAGINATION LOGIC
-   *
-   * We only want to show products for the current page.
+   * only  show products for the current page.
    *
    * Example for page 1:
    * startIndex = 0
@@ -133,8 +126,7 @@ export default function ProductListPage() {
       <h2>Product List</h2>
 
       {/* 
-        SEARCH BAR + SORT DROPDOWN
-        --------------------------------
+       
         This section allows the user to:
         1. Search for a product
         2. Sort products by price
@@ -178,11 +170,31 @@ export default function ProductListPage() {
       </div>
 
       {/* 
-        PRODUCT GRID
-        --------------------------------
-        This section displays only the products
-        for the current page after filtering and sorting.
+        This section displays only the products for the current page after filtering and sorting.
       */}
+      
+      /*
+auto-fill Here is how it works:
+
+auto-fill tells CSS Grid to create as many columns as possible in the available width
+minmax(220px, 1fr) means each product card:
+should not be smaller than 220px
+can grow larger to fill the row
+
+In the real situation: 
+the number of products per row depends on the screen width.
+
+On a:
+large screen: several products can appear in one row
+medium screen: fewer products per row
+small screen / smartphone: usually 1 product per row if the screen is too narrow for 2 columns
+
+Example:
+
+screen width 1200px → maybe 4 or 5 products in one row
+screen width 700px → maybe 2 or 3 products in one row
+screen width 320px or 375px → usually 1 product in one row
+      */
       <div
         style={{
           display: "grid",
@@ -234,8 +246,6 @@ export default function ProductListPage() {
       </div>
 
       {/* 
-        PAGINATION BUTTONS
-        --------------------------------
         Only show pagination if there is more than 1 page.
       */}
       {totalPages > 1 && (
