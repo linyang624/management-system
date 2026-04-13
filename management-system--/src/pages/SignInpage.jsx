@@ -6,6 +6,9 @@ function SignInPage() {
     password: '',
   });
 
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
   const handleChange = (event) => {
     setFormData({
       ...formData,
@@ -13,30 +16,66 @@ function SignInPage() {
     });
   };
 
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setError('');
+    setSuccess('');
+
+    try {
+      const response = await fetch('http://localhost:5001/api/auth/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.message || 'Sign in failed');
+        return;
+      }
+
+      setSuccess(data.message || 'Sign in successful');
+      console.log(data);
+      // console.log('response:', response);
+      // console.log('status:', response.status);
+      // console.log('ok:', response.ok);
+      //console.log('data:', data);
+    } catch (err) {
+      setError('Cannot connect to server');
+    }
+  };
+
   return (
     <div>
       <h1>Sign In Page</h1>
-      
-      <div>
-        <label>Email</label>
-        <input 
-          name="email" 
-          value={formData.email} 
-          onChange={handleChange}
-        />
-      </div>
 
-      <div>
-        <label>Password</label>
-        <input 
-          name="password" 
-          value={formData.password} 
-          onChange={handleChange}
-        />
-      </div>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>Email</label>
+          <input
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+          />
+        </div>
 
-      <p>Email: {formData.email}</p>
-      <p>Password: {formData.password}</p>
+        <div>
+          <label>Password</label>
+          <input
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+          />
+        </div>
+
+        <button type="submit">Sign In</button>
+      </form>
+
+      {error && <p>{error}</p>}
+      {success && <p>{success}</p>}
     </div>
   );
 }

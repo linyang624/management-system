@@ -10,7 +10,7 @@ const signIn = async (req, res) => {
         const { email, password } = req.body;
         
         if (!email || !password) {
-            return res.status(400).json({ message: 'Invalid Credentials' });
+            return res.status(400).json({ message: 'Email and password are required' });
         }
 
         if (!emailPattern.test(email)) {
@@ -20,11 +20,11 @@ const signIn = async (req, res) => {
         const user = await User.findOne({ email });
 
         if (!user) {
-            return res.status(400).json({ message: 'Invalid Credentials' });
+            return res.status(400).json({ message: 'Email does not exist' });
         }
     
         if (user.password !== password) {
-            return res.status(400).json({ message: 'Invalid Credentials' });
+            return res.status(400).json({ message: 'Incorrect password' });
         }
 
         const payload = {
