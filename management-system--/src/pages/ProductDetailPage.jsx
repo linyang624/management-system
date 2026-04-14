@@ -1,11 +1,12 @@
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
-import { addToCart } from "../features/cart/cartSlice";
+import { addToCart, openCartDrawer } from "../features/cart/cartSlice";
 import products from "../mock/products";
 
 export default function ProductDetailPage() {
   const dispatch = useDispatch();
   const { id } = useParams();
+  const username = "guest";
 
   const product = products.find((item) => item.id === Number(id));
 
@@ -14,7 +15,8 @@ export default function ProductDetailPage() {
   }
 
   const handleAddToCart = () => {
-    dispatch(addToCart(product));
+    dispatch(addToCart({ username, product }));
+    // dispatch(openCartDrawer());
   };
 
   return (

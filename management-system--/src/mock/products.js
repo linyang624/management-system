@@ -4,6 +4,7 @@ const products = [
     name: "iPhone 15",
     price: 999,
     description: "Latest Apple smartphone with powerful performance.",
+    image: "https://t-mobile.scene7.com/is/image/Tmusprod/Apple-iPhone-15-Black-frontimage",
   },
   {
     id: 2,

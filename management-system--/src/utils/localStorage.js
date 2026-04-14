@@ -1,17 +1,25 @@
-export const loadCartFromLocalStorage = () => {
+// Read cart data from localStorage
+export function loadCartState() {
   try {
-    const data = localStorage.getItem("cartItems");
-    return data ? JSON.parse(data) : [];
+    const serializedState = localStorage.getItem("cartState");
+    if (serializedState === null) {
+      return undefined;
+    }
+    return JSON.parse(serializedState);
   } catch (error) {
-    console.error("Failed to load cart from localStorage:", error);
-    return [];
+    return undefined;
   }
-};
+}
 
-export const saveCartToLocalStorage = (cartItems) => {
+// Save cart data to localStorage
+export function saveCartState(state) {
   try {
-    localStorage.setItem("cartItems", JSON.stringify(cartItems));
+    const stateToSave = {
+      cartsByUser: state.cartsByUser,
+    };
+    const serializedState = JSON.stringify(stateToSave);
+    localStorage.setItem("cartState", serializedState);
   } catch (error) {
-    console.error("Failed to save cart to localStorage:", error);
+    // Ignore write errors
   }
-};
+}
