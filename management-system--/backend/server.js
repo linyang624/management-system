@@ -16,8 +16,12 @@ app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 
+// app.get('/', (req, res) => {
+//   res.json({message: 'demo'})
+// });
+
 const PORT = process.env.PORT || 5001;
 
 app.listen(PORT, () => {
-  console.log(`Server start at http://localhost:${PORT}`);
+  console.log(`Server is running on PORT ${PORT}`);
 });
