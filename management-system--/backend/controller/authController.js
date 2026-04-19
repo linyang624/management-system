@@ -1,114 +1,101 @@
-const User = require('../models/User.js');
-//const bcrypt = require('bcrypt');
+import User from '../models/User.js';
+import jwt from 'jsonwebtoken';
 
-const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d).+$/;
+// signIn
+export const signIn = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
 
-//signIn
-const signIn = async (req, res) => { 
-    try {
-        const { email, password } = req.body;
-        
-        if (!email || !password) {
-            return res.status(400).json({ message: 'Email and password are required' });
-        }
+    const user = await User.findOne({ email });
 
-        if (!emailPattern.test(email)) {
-            return res.status(400).json({ message: 'Invalid email format' });
-        }
-
-        const user = await User.findOne({ email });
-
-        if (!user) {
-            return res.status(400).json({ message: 'Email does not exist' });
-        }
-    
-        if (user.password !== password) {
-            return res.status(400).json({ message: 'Incorrect password' });
-        }
-
-        const payload = {
-            user: {
-                _id: user._id,
-                email: user.email,
-                role: user.role
-            }
-        };
-        return res.status(200).json({ payload, message: 'Sign in successful' });
+    if (!user) {
+      return res.status(400).json({ message: 'Email does not exist' });
     }
-    catch (error) {
-        return res.status(500).json({ message: 'Internal Server Error' });
+
+    const isMatch = await user.matchPassword(password);
+
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Incorrect password' });
     }
-}
 
-//signUp
-const signUp = async (req, res) => { 
-    try {
-        const { email, password } = req.body;
+    const payload = {
+      user: {
+        _id: user._id,
+        email: user.email,
+        role: user.role,
+      },
+    };
 
-        if (!email || !password) {
-            return res.status(400).json({ message: 'Email and password are required' });
-        }
-        
-        if (!emailPattern.test(email)) {
-            return res.status(400).json({ message: 'Invalid email format' });
-        }
-        if (!passwordPattern.test(password)) {
-            return res.status(400).json({ message: 'Password must contain letters and numbers' });
-        }
-        
-        const user = await User.findOne({ email });
+    const token = jwt.sign(payload, process.env.JWT_SECRET);
 
-        if (user) {
-            return res.status(400).json({ message: 'Email already exists' });
-        }
-        
-        const newUser = await User.create({ 
-            email: email,
-            password: password,
-        });
+    return res.status(200).json({
+      message: 'Sign in successful',
+      token,
+      user: payload.user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
-        const payload = {
-            user: {
-                _id: newUser._id,
-                email: newUser.email,
-                role: newUser.role
-            }
-        };
+// signUp
+export const signUp = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
 
-        return res.status(201).json({ payload, message: 'Signup Successful' });
+    const existingUser = await User.findOne({ email });
 
+    if (existingUser) {
+      return res.status(400).json({ message: 'Email already exists' });
     }
-    catch (error) {
-        return res.status(500).json({ message: 'Internal Server Error' });
+
+    const newUser = await User.create({
+      email,
+      password,
+    });
+
+    const payload = {
+      user: {
+        _id: newUser._id,
+        email: newUser.email,
+        role: newUser.role,
+      },
+    };
+
+    const token = jwt.sign(payload, process.env.JWT_SECRET);
+
+    return res.status(201).json({
+      message: 'Signup successful',
+      token,
+      user: payload.user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// updatePassword
+export const updatePassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({ message: 'Email does not exist' });
     }
-}
 
-//updatePassword
-const updatePassword = async (req, res) => { 
-    try {
-        const { email } = req.body;
-        
-        if (!email) {
-            return res.status(400).json({ message: 'Email is required' });
-        }
+    return res.status(200).json({ message: 'Reset request accepted' });
+  } catch (error) {
+    next(error);
+  }
+};
 
-        if (!emailPattern.test(email)) {
-            return res.status(400).json({ message: 'Invalid email format' });
-        }
-
-        const user = await User.findOne({ email });
-
-        if (!user) {
-            return res.status(400).json({ message: 'Email does not exist' });
-        }
-
-        return res.status(200).json({ message: 'Reset request accepted' });
-    }
-    catch (error) {
-        return res.status(500).json({ message: 'Internal Server Error' });
-    }
-}
-const logOut = async (req, res) => {}
-
-module.exports = { signIn, signUp, updatePassword, logOut };
+// logOut
+export const logOut = async (req, res, next) => {
+  try {
+    return res.status(200).json({ message: 'Logout successful' });
+  } catch (error) {
+    next(error);
+  }
+};

@@ -1,6 +1,6 @@
 import express from 'express';
 import { signIn, signUp, updatePassword, logOut } from '../controller/authController.js';
-import { valudate } from '../middlewares/authValidators.js';
+import { validate } from '../middlewares/validation.js';
 import { signInValidation, signUpValidation, updatePasswordValidation } from '../middlewares/authValidators.js';
 const router = express.Router();
 //auth routes

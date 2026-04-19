@@ -1,16 +1,10 @@
-// const express = require('express');
-// const cors = require('cors');
-// const dotenv = require('dotenv');
-
-// const connectDB = require('./config/db');
-// const authRoutes = require('./routes/authRoutes');
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
 import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
-
+import errorHandler from './middlewares/error.js';
 dotenv.config();
 
 const app = express();
@@ -22,9 +16,8 @@ app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 
-// app.get('/', (req, res) => {
-//   res.json({message: 'demo'})
-// });
+//error middleware shoule be palced after routers
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5001;
 
