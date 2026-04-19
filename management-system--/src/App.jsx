@@ -126,7 +126,7 @@ import SignUpPage from './pages/SignUpPage';
 import UpdatePasswordPage from './pages/UpdatePasswordPage';
 
 function App() {
-  return <UpdatePasswordPage />;
+  return <SignInPage />;
 }
 
 export default App;

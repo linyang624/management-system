@@ -46,7 +46,7 @@ export async function updatePasswordApi(formData) {
 }
 
 //logout
-export async function logOutApi(formData) {
+export async function logOutApi() {
     const response = await fetch(`${BASE_URL}/logout`, {
         method: 'POST',
         headers: {

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { signInApi } from '../api/authApi';
 
 function SignInPage() {
   const [formData, setFormData] = useState ({
@@ -22,23 +23,10 @@ function SignInPage() {
     setSuccess('');
 
     try {
-      const response = await fetch('http://localhost:5001/api/auth/signin', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.message || 'Sign in failed');
-        return;
-      }
-
+      const data = await signInApi(formData);
       setSuccess(data.message || 'Sign in successful');
       console.log(data);
+      
       // console.log('response:', response);
       // console.log('status:', response.status);
       // console.log('ok:', response.ok);
