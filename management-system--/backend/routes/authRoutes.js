@@ -1,11 +1,13 @@
-const express = require('express');
-
+import express from 'express';
+import { signIn, signUp, updatePassword, logOut } from '../controller/authController.js';
+import { valudate } from '../middlewares/authValidators.js';
+import { signInValidation, signUpValidation, updatePasswordValidation } from '../middlewares/authValidators.js';
 const router = express.Router();
-const { signIn, signUp, updatePassword } = require('../controller/authController.js');
-
 //auth routes
-router.post('/signin', signIn);
-router.post('/signup', signUp);
-router.put('/update-password', updatePassword);
+router.post('/signin', signInValidation, validate, signIn);
+router.post('/signup', signUpValidation, validate,signUp);
+router.put('/update-password', updatePasswordValidation, validate, updatePassword);
+router.post('/logout', logOut);
 
-module.exports = router;
+//module.exports = router;
+export default router;

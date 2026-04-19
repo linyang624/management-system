@@ -122,9 +122,11 @@
 // export default App
 
 import SignInPage from './pages/SignInPage';
+import SignUpPage from './pages/SignUpPage';
+import UpdatePasswordPage from './pages/UpdatePasswordPage';
 
 function App() {
-  return <SignInPage />;
+  return <UpdatePasswordPage />;
 }
 
 export default App;

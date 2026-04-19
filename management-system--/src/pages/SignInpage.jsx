@@ -56,6 +56,7 @@ function SignInPage() {
         <div>
           <label>Email</label>
           <input
+            type = "text"
             name="email"
             value={formData.email}
             onChange={handleChange}
@@ -65,6 +66,7 @@ function SignInPage() {
         <div>
           <label>Password</label>
           <input
+            type = "password"
             name="password"
             value={formData.password}
             onChange={handleChange}
