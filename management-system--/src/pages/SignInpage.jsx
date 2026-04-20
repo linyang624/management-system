@@ -1,14 +1,15 @@
 import { useState } from 'react';
-import { signInApi } from '../api/authApi';
+import { useDispatch, useSelector } from 'react-redux';
+import { signIn, clearAuthMessage } from '../features/auth/authSlice';
 
 function SignInPage() {
+  const dispatch = useDispatch();
+  const { loading, error, successMessage } = useSelector((state) => state.auth);
+
   const [formData, setFormData] = useState ({
     email: '',
     password: '',
   });
-
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
 
   const handleChange = (event) => {
     setFormData({
@@ -19,22 +20,10 @@ function SignInPage() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setError('');
-    setSuccess('');
-
-    try {
-      const data = await signInApi(formData);
-      setSuccess(data.message || 'Sign in successful');
-      console.log(data);
-      
-      // console.log('response:', response);
-      // console.log('status:', response.status);
-      // console.log('ok:', response.ok);
-      //console.log('data:', data);
-    } catch (err) {
-      setError('Cannot connect to server');
-    }
-  };
+    
+    dispatch(clearAuthMessage());
+    dispatch(signIn(formData));
+  }
 
   return (
     <div>
@@ -61,11 +50,13 @@ function SignInPage() {
           />
         </div>
 
-        <button type="submit">Sign In</button>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Signing In...' : 'Sign In'}
+        </button>
       </form>
 
       {error && <p>{error}</p>}
-      {success && <p>{success}</p>}
+      {successMessage && <p>{successMessage}</p>}
     </div>
   );
 }
