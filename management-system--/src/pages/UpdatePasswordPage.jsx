@@ -1,13 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from 'react-redux';
+import { updatePassword, clearAuthMessage } from '../features/auth/authSlice';
 
 function UpdatePasswordPage() {
+    const dispatch = useDispatch();
+    const { loading, error, successMessage } = useSelector((state) => state.auth);
+
     const [formData, setFormData] = useState({
         email: '',
     });
 
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
     const [isSubmitted, setIsSubmitted] = useState(false);
+
+    useEffect(() => {
+        if (successMessage) {
+            setIsSubmitted(true);
+        }
+    }, [successMessage]);
 
     const handleChange = (event) => {
         setFormData({
@@ -18,33 +27,11 @@ function UpdatePasswordPage() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setError('');
-        setSuccess('');
+    
+        dispatch(clearAuthMessage());
+        dispatch(updatePassword(formData));
 
-        try {
-            const response  = await fetch('http://localhost:5001/api/auth/update-password', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            });
-
-            const data = await response.json();
-
-            if(!response.ok) {
-                setError(data.message || 'Update Password Fail');
-                return;
-            }
-
-            setSuccess(data.message || 'Update Password Successful');
-            setIsSubmitted(true);
-            console.log(data);
-        }
-        catch(err) {
-            setError('Cannot connect to server');
-        }
-    }
+    };
 
     if(isSubmitted) {
         return (
@@ -63,18 +50,20 @@ function UpdatePasswordPage() {
                 <div>
                     <label>Email</label>
                     <input
-                        type = "email"
+                        type = "text"
                         name = "email"
                         value = {formData.email}
                         onChange={handleChange}
                     />
                 </div>
 
-                <button type='submit'>Update Password</button>
+                <button type="submit" disabled={loading}>
+                    {loading ? 'Submitting...' : 'Update Password'}
+                </button>
             </form>
 
             {error && <p>{error}</p>}
-            {success && <p>{success}</p>}
+            {successMessage && <p>{successMessage}</p>}
         </div>
     );
 }
