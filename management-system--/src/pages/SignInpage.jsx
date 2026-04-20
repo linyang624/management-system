@@ -23,7 +23,7 @@ function SignInPage() {
     
     dispatch(clearAuthMessage());
     dispatch(signIn(formData));
-  }
+  };
 
   return (
     <div>
