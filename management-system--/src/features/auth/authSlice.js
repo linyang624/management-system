@@ -6,6 +6,7 @@ import {
   logOutApi,
 } from '../../api/authApi';
 
+//initial state
 const initialState = {
   user: null,
   token: '',
@@ -15,6 +16,7 @@ const initialState = {
   successMessage: '',
 };
 
+//signin
 export const signIn = createAsyncThunk(
   'auth/signIn',
   async (formData, { rejectWithValue }) => {
@@ -27,6 +29,7 @@ export const signIn = createAsyncThunk(
   }
 );
 
+//signup
 export const signUp = createAsyncThunk(
   'auth/signUp',
   async (formData, { rejectWithValue }) => {
@@ -39,6 +42,7 @@ export const signUp = createAsyncThunk(
   }
 );
 
+//update-password
 export const updatePassword = createAsyncThunk(
   'auth/updatePassword',
   async (formData, { rejectWithValue }) => {
@@ -51,6 +55,7 @@ export const updatePassword = createAsyncThunk(
   }
 );
 
+//logout
 export const logOut = createAsyncThunk(
   'auth/logOut',
   async (_, { rejectWithValue }) => {
@@ -63,6 +68,7 @@ export const logOut = createAsyncThunk(
   }
 );
 
+// authslice manage login relate, including: initial state, reducer(internal), extrareducer(external)
 const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -118,8 +124,7 @@ const authSlice = createSlice({
       })
       .addCase(updatePassword.fulfilled, (state, action) => {
         state.loading = false;
-        state.successMessage =
-          action.payload.message || 'Reset request accepted';
+        state.successMessage = action.payload.message || 'Reset request accepted';
       })
       .addCase(updatePassword.rejected, (state, action) => {
         state.loading = false;
