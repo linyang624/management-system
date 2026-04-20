@@ -5,11 +5,7 @@ import {
   updatePasswordApi,
   logOutApi,
 } from '../../api/authApi';
-import {
-  getAuthFromStorage,
-  saveAuthToStorage,
-  clearAuthFromStorage,
-} from '../../utils/localStorage';
+import { getAuthFromStorage } from '../../utils/localStorage';
 
 const savedAuth = getAuthFromStorage();
 
@@ -79,9 +75,9 @@ const authSlice = createSlice({
       state.successMessage = '';
     },
   },
-  extraReducers: builder => {
+  extraReducers: (builder) => {
     builder
-      .addCase(signIn.pending, state => {
+      .addCase(signIn.pending, (state) => {
         state.loading = true;
         state.error = '';
         state.successMessage = '';
@@ -92,19 +88,13 @@ const authSlice = createSlice({
         state.token = action.payload.token;
         state.isAuthenticated = true;
         state.successMessage = action.payload.message || 'Sign in successful';
-
-        saveAuthToStorage({
-          user: action.payload.user,
-          token: action.payload.token,
-          isAuthenticated: true,
-        });
       })
       .addCase(signIn.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
 
-      .addCase(signUp.pending, state => {
+      .addCase(signUp.pending, (state) => {
         state.loading = true;
         state.error = '';
         state.successMessage = '';
@@ -115,19 +105,13 @@ const authSlice = createSlice({
         state.token = action.payload.token;
         state.isAuthenticated = true;
         state.successMessage = action.payload.message || 'Signup successful';
-
-        saveAuthToStorage({
-          user: action.payload.user,
-          token: action.payload.token,
-          isAuthenticated: true,
-        });
       })
       .addCase(signUp.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
 
-      .addCase(updatePassword.pending, state => {
+      .addCase(updatePassword.pending, (state) => {
         state.loading = true;
         state.error = '';
         state.successMessage = '';
@@ -142,7 +126,7 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
-      .addCase(logOut.pending, state => {
+      .addCase(logOut.pending, (state) => {
         state.loading = true;
         state.error = '';
         state.successMessage = '';
@@ -153,8 +137,6 @@ const authSlice = createSlice({
         state.token = '';
         state.isAuthenticated = false;
         state.successMessage = action.payload.message || 'Logout successful';
-
-        clearAuthFromStorage();
       })
       .addCase(logOut.rejected, (state, action) => {
         state.loading = false;
