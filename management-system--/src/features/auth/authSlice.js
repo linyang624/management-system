@@ -5,18 +5,23 @@ import {
   updatePasswordApi,
   logOutApi,
 } from '../../api/authApi';
+import {
+  getAuthFromStorage,
+  saveAuthToStorage,
+  clearAuthFromStorage,
+} from '../../utils/localStorage';
 
-//initial state
+const savedAuth = getAuthFromStorage();
+
 const initialState = {
-  user: null,
-  token: '',
-  isAuthenticated: false,
+  user: savedAuth?.user || null,
+  token: savedAuth?.token || '',
+  isAuthenticated: savedAuth?.isAuthenticated || false,
   loading: false,
   error: '',
   successMessage: '',
 };
 
-//signin
 export const signIn = createAsyncThunk(
   'auth/signIn',
   async (formData, { rejectWithValue }) => {
@@ -29,7 +34,6 @@ export const signIn = createAsyncThunk(
   }
 );
 
-//signup
 export const signUp = createAsyncThunk(
   'auth/signUp',
   async (formData, { rejectWithValue }) => {
@@ -42,7 +46,6 @@ export const signUp = createAsyncThunk(
   }
 );
 
-//update-password
 export const updatePassword = createAsyncThunk(
   'auth/updatePassword',
   async (formData, { rejectWithValue }) => {
@@ -55,7 +58,6 @@ export const updatePassword = createAsyncThunk(
   }
 );
 
-//logout
 export const logOut = createAsyncThunk(
   'auth/logOut',
   async (_, { rejectWithValue }) => {
@@ -68,7 +70,6 @@ export const logOut = createAsyncThunk(
   }
 );
 
-// authslice manage login relate, including: initial state, reducer(internal), extrareducer(external)
 const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -80,7 +81,6 @@ const authSlice = createSlice({
   },
   extraReducers: builder => {
     builder
-      // sign in
       .addCase(signIn.pending, state => {
         state.loading = true;
         state.error = '';
@@ -92,13 +92,18 @@ const authSlice = createSlice({
         state.token = action.payload.token;
         state.isAuthenticated = true;
         state.successMessage = action.payload.message || 'Sign in successful';
+
+        saveAuthToStorage({
+          user: action.payload.user,
+          token: action.payload.token,
+          isAuthenticated: true,
+        });
       })
       .addCase(signIn.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
 
-      // sign up
       .addCase(signUp.pending, state => {
         state.loading = true;
         state.error = '';
@@ -110,13 +115,18 @@ const authSlice = createSlice({
         state.token = action.payload.token;
         state.isAuthenticated = true;
         state.successMessage = action.payload.message || 'Signup successful';
+
+        saveAuthToStorage({
+          user: action.payload.user,
+          token: action.payload.token,
+          isAuthenticated: true,
+        });
       })
       .addCase(signUp.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
 
-      // update password
       .addCase(updatePassword.pending, state => {
         state.loading = true;
         state.error = '';
@@ -124,14 +134,14 @@ const authSlice = createSlice({
       })
       .addCase(updatePassword.fulfilled, (state, action) => {
         state.loading = false;
-        state.successMessage = action.payload.message || 'Reset request accepted';
+        state.successMessage =
+          action.payload.message || 'Reset request accepted';
       })
       .addCase(updatePassword.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
 
-      // log out
       .addCase(logOut.pending, state => {
         state.loading = true;
         state.error = '';
@@ -143,6 +153,8 @@ const authSlice = createSlice({
         state.token = '';
         state.isAuthenticated = false;
         state.successMessage = action.payload.message || 'Logout successful';
+
+        clearAuthFromStorage();
       })
       .addCase(logOut.rejected, (state, action) => {
         state.loading = false;
