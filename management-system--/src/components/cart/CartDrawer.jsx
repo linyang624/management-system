@@ -13,6 +13,7 @@ export default function CartDrawer() {
   const navigate = useNavigate();
   const username = "guest";
 
+  // Right-side cart panel (quick view)
   const isDrawerOpen = useSelector((state) => state.cart.isDrawerOpen);
   const userCart =
     useSelector((state) => state.cart.cartsByUser[username]) || {
@@ -24,8 +25,12 @@ export default function CartDrawer() {
   const { subtotal, discount, shipping, tax, total } =
     calculateCartTotals(userCart);
 
+  // Don't render if closed
   if (!isDrawerOpen) return null;
+  
+  // Also shows total and checkout button
 
+  // Navigate to checkout after closing drawer
   const handleCheckout = () => {
     dispatch(closeCartDrawer());
     navigate("/checkout");
@@ -53,6 +58,7 @@ export default function CartDrawer() {
         <p>Your cart is empty.</p>
       ) : (
         <>
+          {/* Show cart items + quick actions (+ / - / remove) */}
           {userCart.items.map((item) => (
             <div
               key={item.id}
@@ -86,6 +92,7 @@ export default function CartDrawer() {
             </div>
           ))}
 
+          {/* Also shows total and checkout button */}
           <p>Subtotal: ${subtotal.toFixed(2)}</p>
           <p>Discount: -${discount.toFixed(2)}</p>
           <p>Shipping: ${shipping.toFixed(2)}</p>

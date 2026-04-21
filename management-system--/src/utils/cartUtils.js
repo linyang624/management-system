@@ -1,14 +1,18 @@
+// Central place to calculate all prices
+// Keeps logic consistent across pages
 export function calculateCartTotals(userCart) {
+  // Sum of all items
   const items = userCart?.items || [];
   const discountRate = userCart?.discountRate || 0;
 
   const subtotal = items.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
+    (sum, item) => sum + item.price * item.quantity
+  , 0);
 
   const discount = subtotal * discountRate;
-  const shipping = subtotal > 0 ? 10 : 0;
+  // Free shipping over $50
+  const shipping = subtotal > 50 ? 10 : 0;
+  // Simple 8% tax
   const tax = subtotal * 0.08;
   const total = subtotal - discount + shipping + tax;
 

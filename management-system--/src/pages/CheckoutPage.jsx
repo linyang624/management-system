@@ -10,17 +10,20 @@ import {
 import { calculateCartTotals } from "../utils/cartUtils";
 import { useEffect, useState } from "react";
 
+// Full checkout page (final review)
 export default function CheckoutPage() {
   const dispatch = useDispatch();
   const username = "guest";
-  const [promoInput, setPromoInput] = useState("");
+  const [promoInput, setPromoInput] = useState(""); // input field
 
+  // Clear promo message when leaving page
   useEffect(() => {
     return () => {
       dispatch(clearPromoFeedback(username));
     };
   }, [dispatch, username]);
 
+  // Get cart data
   const userCart =
     useSelector((state) => state.cart.cartsByUser[username]) || {
       items: [],
@@ -32,9 +35,11 @@ export default function CheckoutPage() {
 
   const itemCount = userCart.items.reduce((sum, item) => sum + item.quantity, 0);
 
+  // Calculate full price breakdown
   const { subtotal, discount, shipping, tax, total } =
     calculateCartTotals(userCart);
 
+  // Apply promo code
   const handleApplyPromo = () => {
     dispatch(applyPromoCode({ username, code: promoInput }));
   };

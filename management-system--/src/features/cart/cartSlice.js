@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { loadCartState } from "../../utils/localStorage";
 
 const savedState = loadCartState();
+// Initial cart state (one cart per user)
 const initialState = {
   cartsByUser: savedState?.cartsByUser || {
     guest: {
@@ -12,9 +13,10 @@ const initialState = {
       promoError: "",
     },
   },
-  isDrawerOpen: false,
+  isDrawerOpen: false, // UI state for cart drawer
 };
 
+// Helper: make sure user always has a cart
 const getUserCart = (state, username) => {
   if (!state.cartsByUser[username]) {
     state.cartsByUser[username] = {
@@ -32,6 +34,8 @@ const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
+
+    // UI control for drawer
     openCartDrawer: (state) => {
       state.isDrawerOpen = true;
     },
@@ -39,7 +43,7 @@ const cartSlice = createSlice({
     closeCartDrawer: (state) => {
       state.isDrawerOpen = false;
     },
-
+    // Add item or increase quantity if already exists
     addToCart: (state, action) => {
       const { username, product } = action.payload;
       const userCart = getUserCart(state, username);
@@ -52,7 +56,7 @@ const cartSlice = createSlice({
         userCart.items.push({ ...product, quantity: 1 });
       }
     },
-
+    // Increase quantity
     increaseQuantity: (state, action) => {
       const { username, productId } = action.payload;
       const userCart = getUserCart(state, username);
@@ -62,7 +66,7 @@ const cartSlice = createSlice({
         item.quantity += 1;
       }
     },
-
+    // Decrease quantity or remove if 0
     decreaseQuantity: (state, action) => {
       const { username, productId } = action.payload;
       const userCart = getUserCart(state, username);
@@ -71,17 +75,17 @@ const cartSlice = createSlice({
       if (item) {
         item.quantity -= 1;
       }
-
+      // if the quatity is 0, we should remove it
       userCart.items = userCart.items.filter((item) => item.quantity > 0);
     },
-
+    // Remove item completely
     removeFromCart: (state, action) => {
       const { username, productId } = action.payload;
       const userCart = getUserCart(state, username);
 
       userCart.items = userCart.items.filter((item) => item.id !== productId);
     },
-
+    // Reset cart to empty
     clearCart: (state, action) => {
       const username = action.payload;
       const userCart = getUserCart(state, username);
@@ -93,6 +97,7 @@ const cartSlice = createSlice({
       userCart.promoError = "";
     },
 
+    // Apply promo code (hardcoded for demo)
     applyPromoCode: (state, action) => {
       const { username, code } = action.payload;
       const userCart = getUserCart(state, username);
@@ -116,6 +121,8 @@ const cartSlice = createSlice({
         userCart.promoError = "Invalid promo code.";
       }
     },
+
+    // Clear temporary UI messages
     clearPromoFeedback: (state, action) => {
       const username = action.payload;
       const userCart = getUserCart(state, username);

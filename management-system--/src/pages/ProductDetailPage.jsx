@@ -3,17 +3,18 @@ import { useParams } from "react-router-dom";
 import { addToCart, openCartDrawer } from "../features/cart/cartSlice";
 import products from "../mock/products";
 
+// Shows a single product based on URL id
 export default function ProductDetailPage() {
   const dispatch = useDispatch();
-  const { id } = useParams();
+  const { id } = useParams(); // get id from URL
   const username = "guest";
-
+  // Find product by id
   const product = products.find((item) => item.id === Number(id));
 
   if (!product) {
     return <h2 style={{ padding: "20px" }}>Product not found.</h2>;
   }
-
+  // Add current product to cart
   const handleAddToCart = () => {
     dispatch(addToCart({ username, product }));
     // dispatch(openCartDrawer());
