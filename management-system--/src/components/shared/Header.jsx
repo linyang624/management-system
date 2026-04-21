@@ -1,13 +1,17 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { openCartDrawer, closeCartDrawer } from "../../features/cart/cartSlice";
+import { logOut, clearAuthMessage } from "../../features/auth/authSlice";
 import { calculateCartTotals } from "../../utils/cartUtils";
 
 // Top navigation bar
 // Shows total cart value + toggle drawer
 export default function Header() {
   const dispatch = useDispatch();
-  const username = "guest";
+  const navigate = useNavigate();
+
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const username = user?.email || "guest";
   const isDrawerOpen = useSelector((state) => state.cart.isDrawerOpen);
 
   // Get current user's cart
@@ -28,10 +32,25 @@ export default function Header() {
     }
   };
 
+  const handleLogOut = async () => {
+    dispatch(clearAuthMessage());
+    await dispatch(logOut());
+    navigate("/signin");
+  };
+
   return (
-    <nav style={{ display: "flex", gap: "12px", padding: "16px" }}>
-      <Link to="/">Home</Link>
-      <button onClick={handleCartClick}>Cart ${total.toFixed(2)}</button>
-    </nav>
+    <header style={{ display: "flex", gap: "12px", padding: "16px" }}>
+      <h2>Management</h2>
+
+      {!isAuthenticated ? (
+        <Link to="/signin">Sign In</Link>
+      ) : (
+        <>
+          <Link to="/products">Home</Link>
+          <button onClick={handleCartClick}>Cart ${total.toFixed(2)}</button>
+          <button onClick={handleLogOut}>Sign Out</button>
+        </>
+      )}
+    </header>
   );
 }

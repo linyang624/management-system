@@ -13,7 +13,8 @@ import { useEffect, useState } from "react";
 // Full checkout page (final review)
 export default function CheckoutPage() {
   const dispatch = useDispatch();
-  const username = "guest";
+  const user = useSelector((state) => state.auth.user);
+  const username = user?.email || "guest";
   const [promoInput, setPromoInput] = useState(""); // input field
 
   // Clear promo message when leaving page
@@ -25,7 +26,7 @@ export default function CheckoutPage() {
 
   // Get cart data
   const userCart =
-    useSelector((state) => state.cart.cartsByUser[username]) || {
+    useSelector((state) => state.cart.cartsByUser?.[username]) || {
       items: [],
       promoCode: "",
       discountRate: 0,

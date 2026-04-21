@@ -11,7 +11,8 @@ import { calculateCartTotals } from "../../utils/cartUtils";
 export default function CartDrawer() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const username = "guest";
+  const user = useSelector((state) => state.auth.user);
+  const username = user?.email || "guest";
 
   // Right-side cart panel (quick view)
   const isDrawerOpen = useSelector((state) => state.cart.isDrawerOpen);

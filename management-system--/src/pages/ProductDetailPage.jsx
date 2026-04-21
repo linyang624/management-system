@@ -7,7 +7,8 @@ import products from "../mock/products";
 export default function ProductDetailPage() {
   const dispatch = useDispatch();
   const { id } = useParams(); // get id from URL
-  const username = "guest";
+  const user = useSelector((state) => state.auth.user);
+  const username = user?.email || "guest";
   // Find product by id
   const product = products.find((item) => item.id === Number(id));
 

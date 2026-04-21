@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { loadCartState } from "../../utils/localStorage";
+import { loadCartState } from "../../utils/cartStorage";
 
 const savedState = loadCartState();
 // Initial cart state (one cart per user)

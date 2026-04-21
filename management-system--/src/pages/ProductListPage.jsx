@@ -7,8 +7,8 @@ import { addToCart } from "../features/cart/cartSlice";
 // User can click to view details or add to cart
 export default function ProductListPage() {
   const dispatch = useDispatch();
-  const username = "guest";
-
+  const user = useSelector((state) => state.auth.user);
+  const username = user?.email || "guest";
   const handleAddToCart = (product) => {
     dispatch(addToCart({ username, product }));
   };
