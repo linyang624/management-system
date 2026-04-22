@@ -39,12 +39,6 @@ function AuthForm({ mode }) {
     }
   }, [mode, successMessage]);
 
-  useEffect(() => {
-    if (mode === 'signin' && successMessage) {
-      navigate('/products');
-    }
-  }, [mode, successMessage, navigate]);
-
   const handleChange = (event) => {
     setFormData({
       ...formData,
@@ -52,7 +46,7 @@ function AuthForm({ mode }) {
     });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     dispatch(clearAuthMessage());
@@ -64,26 +58,32 @@ function AuthForm({ mode }) {
       return;
     }
 
-    if (mode === 'signin') {
-      dispatch(
-        signIn({
-          email: formData.email,
-          password: formData.password,
-        })
-      );
-    } else if (mode === 'signup') {
-      dispatch(
-        signUp({
-          email: formData.email,
-          password: formData.password,
-        })
-      );
-    } else if (mode === 'updatePassword') {
-      dispatch(
-        updatePassword({
-          email: formData.email,
-        })
-      );
+    try {
+      if (mode === 'signin') {
+        await dispatch(
+          signIn({
+            email: formData.email,
+            password: formData.password,
+          })
+        ).unwrap();
+
+        navigate('/products');
+      } else if (mode === 'signup') {
+        await dispatch(
+          signUp({
+            email: formData.email,
+            password: formData.password,
+          })
+        ).unwrap();
+      } else if (mode === 'updatePassword') {
+        await dispatch(
+          updatePassword({
+            email: formData.email,
+          })
+        ).unwrap();
+      }
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -92,6 +92,9 @@ function AuthForm({ mode }) {
       <div>
         <h1>Update Password Success Page</h1>
         <p>We have sent the update password link to your email, please check that!</p>
+        <p>
+          <Link to="/signin">Sign in</Link>
+        </p>
       </div>
     );
   }
