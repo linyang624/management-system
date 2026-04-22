@@ -40,13 +40,13 @@ export default function Header() {
 
   return (
     <header style={{ display: "flex", gap: "12px", padding: "16px" }}>
-      <h2>Management</h2>
+      <Link to="/products">Management Chuwa</Link>
 
       {!isAuthenticated ? (
         <Link to="/signin">Sign In</Link>
       ) : (
         <>
-          <Link to="/products">Home</Link>
+          {/* <Link to="/products">Management Chuwa</Link> */}
           <button onClick={handleCartClick}>Cart ${total.toFixed(2)}</button>
           <button onClick={handleLogOut}>Sign Out</button>
         </>

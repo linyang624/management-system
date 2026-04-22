@@ -1,15 +1,25 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import products from "../mock/products";
 import { addToCart } from "../features/cart/cartSlice";
+
 
 // Shows all products
 // User can click to view details or add to cart
 export default function ProductListPage() {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth.user);
+  // const user = useSelector((state) => state.auth.user);
+
+  const navigate = useNavigate();
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
   const username = user?.email || "guest";
+
   const handleAddToCart = (product) => {
+    if (!isAuthenticated) {
+      alert("Please sign in first.");
+      navigate("/signin");
+      return;
+    }
     dispatch(addToCart({ username, product }));
   };
 

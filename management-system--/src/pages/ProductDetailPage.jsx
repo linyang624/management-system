@@ -1,14 +1,18 @@
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
 import { addToCart, openCartDrawer } from "../features/cart/cartSlice";
 import products from "../mock/products";
+import { useParams, useNavigate } from "react-router-dom";
 
 // Shows a single product based on URL id
 export default function ProductDetailPage() {
   const dispatch = useDispatch();
   const { id } = useParams(); // get id from URL
-  const user = useSelector((state) => state.auth.user);
+  // const user = useSelector((state) => state.auth.user);
+
+  const navigate = useNavigate();
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
   const username = user?.email || "guest";
+
   // Find product by id
   const product = products.find((item) => item.id === Number(id));
 
@@ -17,6 +21,11 @@ export default function ProductDetailPage() {
   }
   // Add current product to cart
   const handleAddToCart = () => {
+    if (!isAuthenticated) {
+      alert("Please sign in first.");
+      navigate("/signin");
+      return;
+    }
     dispatch(addToCart({ username, product }));
     // dispatch(openCartDrawer());
   };
