@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   signIn,
@@ -11,6 +11,8 @@ import { validateAuthForm } from '../../utils/validators';
 
 function AuthForm({ mode }) {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const { loading, error, successMessage } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
@@ -36,6 +38,12 @@ function AuthForm({ mode }) {
       setIsSubmitted(true);
     }
   }, [mode, successMessage]);
+
+  useEffect(() => {
+    if (mode === 'signin' && successMessage) {
+      navigate('/products');
+    }
+  }, [mode, successMessage, navigate]);
 
   const handleChange = (event) => {
     setFormData({
