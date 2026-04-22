@@ -92,9 +92,6 @@ function AuthForm({ mode }) {
       <div>
         <h1>Update Password Success Page</h1>
         <p>We have sent the update password link to your email, please check that!</p>
-        <p>
-          <Link to="/signin">Sign in</Link>
-        </p>
       </div>
     );
   }
