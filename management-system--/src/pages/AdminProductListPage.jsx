@@ -3,6 +3,7 @@ import products from "../mock/products";
 import SearchBar from "./SearchBar";
 import ProductGrid from "./ProductGrid";
 import Pagination from "./Pagination";
+import { useNavigate } from "react-router-dom";
 
 // Number of products shown on each page
 const PRODUCTS_PER_PAGE = 8;
@@ -20,6 +21,8 @@ export default function AdminProductListPage() {
   // Current pagination page
   const [currentPage, setCurrentPage] = useState(1);
 
+  //navigate
+  const navigate = useNavigate();
   /*
     Filter products based on search input.
     Search checks name, description, category, and price.
@@ -70,8 +73,20 @@ export default function AdminProductListPage() {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h2>Admin Product List</h2>
-
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBotton: "20px",
+        }}
+      >
+        <h2 style={{ margin: 0 }}>Admin Product List</h2>
+        <button onClick={() => navigate("/admin/products/create")}>
+          Add Product
+        </button>
+      </div>
+      
       <SearchBar
         searchTerm={searchTerm}
         onSearchChange={handleSearchChange}
