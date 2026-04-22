@@ -1,4 +1,4 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { addToCart, openCartDrawer } from "../features/cart/cartSlice";
 import products from "../mock/products";

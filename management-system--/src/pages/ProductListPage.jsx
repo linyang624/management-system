@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import products from "../mock/products";
 import { addToCart } from "../features/cart/cartSlice";
 
