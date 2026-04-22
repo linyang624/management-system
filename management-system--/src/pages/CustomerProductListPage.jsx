@@ -15,11 +15,13 @@ import Pagination from "./Pagination";
 const PRODUCTS_PER_PAGE = 8;
 
 // Customer product list page
-// Requirements:
-// - no Edit button
-// - has cart actions
-// - shows number of items and total price
-// - reuses SearchBar, ProductGrid, Pagination
+// Features:
+// - search
+// - sort
+// - pagination
+// - cart summary
+// - Add to Cart / quantity controls
+// - no Add Product button
 
 export default function CustomerProductListPage() {
   const dispatch = useDispatch();
@@ -29,7 +31,7 @@ export default function CustomerProductListPage() {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
   const username = user?.email || "guest";
 
-  // Current user's cart from cartsByUser
+  // Current user's cart
   const userCart = useSelector(
     (state) =>
       state.cart.cartsByUser?.[username] || {
@@ -41,18 +43,22 @@ export default function CustomerProductListPage() {
       }
   );
 
-  // Search text
+  // Search input state
   const [searchTerm, setSearchTerm] = useState("");
+
+  // Sort dropdown state
+  const [sortOrder, setSortOrder] = useState("default");
 
   // Current page number
   const [currentPage, setCurrentPage] = useState(1);
 
   /*
-    Filter products by search text
+    Filter and sort products
   */
-  const filteredProducts = useMemo(() => {
+  const filteredAndSortedProducts = useMemo(() => {
     let result = [...products];
 
+    // Search
     if (searchTerm.trim()) {
       const keyword = searchTerm.toLowerCase();
 
@@ -67,21 +73,29 @@ export default function CustomerProductListPage() {
       });
     }
 
+    // Sort
+    if (sortOrder === "priceAsc") {
+      result.sort((a, b) => a.price - b.price);
+    } else if (sortOrder === "priceDesc") {
+      result.sort((a, b) => b.price - a.price);
+    }
+    // default = Last added
+
     return result;
-  }, [searchTerm]);
+  }, [searchTerm, sortOrder]);
 
   // Total page count
-  const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
+  const totalPages = Math.ceil(
+    filteredAndSortedProducts.length / PRODUCTS_PER_PAGE
+  );
 
-  /*
-    Paginated products for current page
-  */
+  // Products for current page
   const paginatedProducts = useMemo(() => {
     const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
     const endIndex = startIndex + PRODUCTS_PER_PAGE;
 
-    return filteredProducts.slice(startIndex, endIndex);
-  }, [filteredProducts, currentPage]);
+    return filteredAndSortedProducts.slice(startIndex, endIndex);
+  }, [filteredAndSortedProducts, currentPage]);
 
   // Cart summary
   const totalItems = userCart.items.reduce(
@@ -97,6 +111,12 @@ export default function CustomerProductListPage() {
   // Search input handler
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
+
+  // Sort dropdown handler
+  const handleSortChange = (e) => {
+    setSortOrder(e.target.value);
     setCurrentPage(1);
   };
 
@@ -141,61 +161,77 @@ export default function CustomerProductListPage() {
       <p>Total items: {totalItems}</p>
       <p>Total price: ${totalPrice}</p>
 
-      <SearchBar
-        searchTerm={searchTerm}
-        onSearchChange={handleSearchChange}
-      />
-
-      <div style={{ marginTop: "20px" }}>
-        <ProductGrid
-          products={paginatedProducts}
-          renderActions={(product) => {
-            // Check whether this product is already in cart
-            const cartItem = userCart.items.find(
-              (item) => item.id === product.id
-            );
-
-            return (
-              <>
-                {/* Link to detail page */}
-                <div style={{ marginBottom: "10px" }}>
-                  <Link to={`/products/${product.id}`}>View Details</Link>
-                </div>
-
-                {/* Cart action area */}
-                {!cartItem ? (
-                  <button onClick={() => handleAddToCart(product)}>
-                    Add to Cart
-                  </button>
-                ) : (
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "10px",
-                    }}
-                  >
-                    <button
-                      onClick={() => handleDecreaseQuantity(product.id)}
-                    >
-                      -
-                    </button>
-
-                    <span>{cartItem.quantity}</span>
-
-                    <button
-                      onClick={() => handleIncreaseQuantity(product.id)}
-                    >
-                      +
-                    </button>
-                  </div>
-                )}
-              </>
-            );
-          }}
+      {/* Search + Sort */}
+      <div
+        style={{
+          display: "flex",
+          gap: "12px",
+          flexWrap: "wrap",
+          alignItems: "center",
+          marginBottom: "20px",
+        }}
+      >
+        <SearchBar
+          searchTerm={searchTerm}
+          onSearchChange={handleSearchChange}
         />
+
+        <select
+          value={sortOrder}
+          onChange={handleSortChange}
+          style={{
+            padding: "10px",
+            border: "1px solid #ccc",
+            borderRadius: "6px",
+          }}
+        >
+          <option value="default">Last added</option>
+          <option value="priceAsc">Price: low to high</option>
+          <option value="priceDesc">Price: high to low</option>
+        </select>
       </div>
 
+      {/* Reusable product grid */}
+      <ProductGrid
+        products={paginatedProducts}
+        renderActions={(product) => {
+          const cartItem = userCart.items.find((item) => item.id === product.id);
+
+          return (
+            <>
+              <div style={{ marginBottom: "10px" }}>
+                <Link to={`/products/${product.id}`}>View Details</Link>
+              </div>
+
+              {!cartItem ? (
+                <button onClick={() => handleAddToCart(product)}>
+                  Add to Cart
+                </button>
+              ) : (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                  }}
+                >
+                  <button onClick={() => handleDecreaseQuantity(product.id)}>
+                    -
+                  </button>
+
+                  <span>{cartItem.quantity}</span>
+
+                  <button onClick={() => handleIncreaseQuantity(product.id)}>
+                    +
+                  </button>
+                </div>
+              )}
+            </>
+          );
+        }}
+      />
+
+      {/* Reusable pagination */}
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
