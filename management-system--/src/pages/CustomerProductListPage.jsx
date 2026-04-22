@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import products from "../mock/products";
 import {
@@ -138,8 +138,18 @@ export default function CustomerProductListPage() {
       <h2>Customer Product List</h2>
 
       {/* Cart summary */}
-      <p>Total items: {totalItems}</p>
-      <p>Total price: ${totalPrice}</p>
+      {/* <div
+        style={{
+          display: "flex",
+          gap: "20px",
+          alignItems: "center",
+          marginBottom: "16px",
+          fontWeight: "500",
+        }}
+      >
+        <span>Items in cart: {totalItems}</span>
+        <span>Cart total: ${totalPrice.toFixed(2)}</span>
+      </div> */}
 
       <SearchBar
         searchTerm={searchTerm}
@@ -149,6 +159,7 @@ export default function CustomerProductListPage() {
       <div style={{ marginTop: "20px" }}>
         <ProductGrid
           products={paginatedProducts}
+          getDetailPath={(product) => `/products/${product.id}`}
           renderActions={(product) => {
             // Check whether this product is already in cart
             const cartItem = userCart.items.find(
@@ -157,11 +168,6 @@ export default function CustomerProductListPage() {
 
             return (
               <>
-                {/* Link to detail page */}
-                <div style={{ marginBottom: "10px" }}>
-                  <Link to={`/products/${product.id}`}>View Details</Link>
-                </div>
-
                 {/* Cart action area */}
                 {!cartItem ? (
                   <button onClick={() => handleAddToCart(product)}>

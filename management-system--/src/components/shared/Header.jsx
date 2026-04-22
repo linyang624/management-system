@@ -33,6 +33,7 @@ export default function Header() {
   };
 
   const handleLogOut = async () => {
+    dispatch(closeCartDrawer());
     dispatch(clearAuthMessage());
     await dispatch(logOut());
     navigate("/signin");

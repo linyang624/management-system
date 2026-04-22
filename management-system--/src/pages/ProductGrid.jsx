@@ -4,7 +4,7 @@ import ProductCard from "./ProductCard";
 // Both admin and customer pages use the same grid.
 // renderActions(product) decides what buttons appear in each card.
 
-export default function ProductGrid({ products, renderActions }) {
+export default function ProductGrid({ products, renderActions, getDetailPath }) {
   return (
     <div
       style={{
@@ -22,7 +22,11 @@ export default function ProductGrid({ products, renderActions }) {
       }}
     >
       {products.map((product) => (
-        <ProductCard key={product.id} product={product}>
+        <ProductCard
+          key={product.id}
+          product={product}
+          detailPath={getDetailPath ? getDetailPath(product) : undefined}
+        >
           {renderActions(product)}
         </ProductCard>
       ))}
