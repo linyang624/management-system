@@ -16,6 +16,7 @@ export default function CartDrawer() {
 
   // Right-side cart panel (quick view)
   const isDrawerOpen = useSelector((state) => state.cart.isDrawerOpen);
+  const { isAuthenticated } = useSelector((state) => state.auth);
   const userCart =
     useSelector((state) => state.cart.cartsByUser[username]) || {
       items: [],
@@ -28,6 +29,7 @@ export default function CartDrawer() {
 
   // Don't render if closed
   if (!isDrawerOpen) return null;
+  if (!isAuthenticated || !isDrawerOpen) return null;
   
   // Also shows total and checkout button
 
