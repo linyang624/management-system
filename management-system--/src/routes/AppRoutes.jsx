@@ -24,13 +24,13 @@ import CheckoutPage from "../pages/CheckoutPage";
 function HomeRedirect() {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
 
-  if (!isAuthenticated) {
-    return <Navigate to="/signin" replace />;
-  }
-
-  if (user?.role === "admin") {
+  if (!isAuthenticated && user?.role === "admin") {
     return <Navigate to="/admin/products" replace />;
   }
+
+//   if (user?.role === "admin") {
+//     return <Navigate to="/admin/products" replace />;
+//   }
 
   return <Navigate to="/products" replace />;
 }
@@ -90,17 +90,17 @@ function AppRoutes() {
           <Route
             path="/products"
             element={
-              <CustomerRoute>
+              
                 <CustomerProductListPage />
-              </CustomerRoute>
+              
             }
           />
           <Route
             path="/products/:id"
             element={
-              <CustomerRoute>
+              
                 <ProductDetailPage />
-              </CustomerRoute>
+              
             }
           />
           <Route

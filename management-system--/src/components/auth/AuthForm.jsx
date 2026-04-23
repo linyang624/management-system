@@ -60,14 +60,19 @@ function AuthForm({ mode }) {
 
     try {
       if (mode === 'signin') {
-        await dispatch(
-          signIn({
-            email: formData.email,
-            password: formData.password,
-          })
+        const data = await dispatch(
+            signIn({
+                email: formData.email,
+                password: formData.password,
+            })
         ).unwrap();
-
-        navigate('/products');
+        
+        if (data.user?.role === 'admin') {
+            navigate('/admin/products');
+        }
+        else {
+            navigate('/products');
+        }
       } else if (mode === 'signup') {
         await dispatch(
           signUp({

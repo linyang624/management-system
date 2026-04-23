@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { openCartDrawer, closeCartDrawer } from "../../features/cart/cartSlice";
 import { logOut, clearAuthMessage } from "../../features/auth/authSlice";
@@ -9,6 +9,7 @@ import { calculateCartTotals } from "../../utils/cartUtils";
 export default function Header() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const { isAuthenticated, user } = useSelector((state) => state.auth);
   const username = user?.email || "guest";
@@ -35,8 +36,14 @@ export default function Header() {
   const handleLogOut = async () => {
     dispatch(closeCartDrawer());
     dispatch(clearAuthMessage());
-    await dispatch(logOut());
-    navigate("/signin");
+    const resultAction = await dispatch(logOut());
+
+    if (logOut.fulfilled.match(resultAction)) {
+        if (location.pathname.startsWith("/admin")) {
+            navigate("/products");
+        }
+        //navigate("/signin");
+    }
   };
 
   return (
