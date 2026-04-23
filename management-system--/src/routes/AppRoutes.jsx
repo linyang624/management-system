@@ -12,6 +12,7 @@ import ProductDetailPage from "../pages/ProductDetailPage";
 import CreateProductPage from "../pages/CreateProductPage";
 import CheckoutPage from "../pages/CheckoutPage";
 import ErrorPage from "../pages/ErrorPage";
+import ErrorBoundary from "../components/shared/ErrorBoundary";
 
 /*
   HomeRedirect decides which home page the user should see.
@@ -23,17 +24,17 @@ import ErrorPage from "../pages/ErrorPage";
   If user is not logged in, send them to sign-in page.
 */
 function HomeRedirect() {
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
+    const { isAuthenticated, user } = useSelector((state) => state.auth);
 
-  if (!isAuthenticated && user?.role === "admin") {
-    return <Navigate to="/admin/products" replace />;
-  }
+    if (isAuthenticated && user?.role === "admin") {
+        return <Navigate to="/admin/products" replace />;
+    }
 
-//   if (user?.role === "admin") {
-//     return <Navigate to="/admin/products" replace />;
-//   }
+    //   if (user?.role === "admin") {
+    //     return <Navigate to="/admin/products" replace />;
+    //   }
 
-  return <Navigate to="/products" replace />;
+    return <Navigate to="/products" replace />;
 }
 
 /*
@@ -42,17 +43,17 @@ function HomeRedirect() {
   If logged in but not admin, send to customer home page.
 */
 function AdminRoute({ children }) {
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
+    const { isAuthenticated, user } = useSelector((state) => state.auth);
 
-  if (!isAuthenticated) {
-    return <Navigate to="/signin" replace />;
-  }
+    if (!isAuthenticated) {
+        return <Navigate to="/signin" replace />;
+    }
 
-  if (user?.role !== "admin") {
-    return <Navigate to="/products" replace />;
-  }
+    if (user?.role !== "admin") {
+        return <Navigate to="/products" replace />;
+    }
 
-  return children;
+    return children;
 }
 
 /*
@@ -61,100 +62,102 @@ function AdminRoute({ children }) {
   If logged in as admin, send to admin home page.
 */
 function CustomerRoute({ children }) {
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
+    const { isAuthenticated, user } = useSelector((state) => state.auth);
 
-  if (!isAuthenticated) {
-    return <Navigate to="/signin" replace />;
-  }
+    if (!isAuthenticated) {
+        return <Navigate to="/signin" replace />;
+    }
 
-  if (user?.role === "admin") {
-    return <Navigate to="/admin/products" replace />;
-  }
+    if (user?.role === "admin") {
+        return <Navigate to="/admin/products" replace />;
+    }
 
-  return children;
+    return children;
 }
 
 function AppRoutes() {
-  return (
-    <BrowserRouter>
-      <Layout>
-        <Routes>
-          {/* Root route sends user to correct home page based on role */}
-          <Route path="/" element={<HomeRedirect />} />
+    return (
+        <ErrorBoundary>
+            <BrowserRouter>
+                <Layout>
+                    <Routes>
+                        {/* Root route sends user to correct home page based on role */}
+                        <Route path="/" element={<HomeRedirect />} />
 
-          {/* Public auth pages */}
-          <Route path="/signin" element={<SignInPage />} />
-          <Route path="/signup" element={<SignUpPage />} />
-          <Route path="/update-password" element={<UpdatePasswordPage />} />
+                        {/* Public auth pages */}
+                        <Route path="/signin" element={<SignInPage />} />
+                        <Route path="/signup" element={<SignUpPage />} />
+                        <Route path="/update-password" element={<UpdatePasswordPage />} />
 
-          {/* Customer pages */}
-          <Route
-            path="/products"
-            element={
-              
-                <CustomerProductListPage />
-              
-            }
-          />
-          <Route
-            path="/products/:id"
-            element={
-              
-                <ProductDetailPage />
-              
-            }
-          />
-          <Route
-            path="/checkout"
-            element={
-              <CustomerRoute>
-                <CheckoutPage />
-              </CustomerRoute>
-            }
-          />
+                        {/* Customer pages */}
+                        <Route
+                            path="/products"
+                            element={
 
-          {/* Admin pages */}
-          <Route
-            path="/admin/products"
-            element={
-              <AdminRoute>
-                <AdminProductListPage />
-              </AdminRoute>
-            }
-          />
-          <Route
-            path="/admin/products/:id"
-            element={
-              <AdminRoute>
-                <ProductDetailPage />
-              </AdminRoute>
-            }
-          />
-          <Route
-            path="/admin/products/create"
-            element={
-              <AdminRoute>
-                <CreateProductPage />
-              </AdminRoute>
-            }
-          />
+                                <CustomerProductListPage />
 
-          <Route
-            path="/admin/products/edit/:id"
-            element={
-              <AdminRoute>
-                <CreateProductPage />
-              </AdminRoute>
-            }
-          />
+                            }
+                        />
+                        <Route
+                            path="/products/:id"
+                            element={
 
-          {/* Fallback route */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-          <Route path="/error" element={<ErrorPage />} />
-        </Routes>
-      </Layout>
-    </BrowserRouter>
-  );
+                                <ProductDetailPage />
+
+                            }
+                        />
+                        <Route
+                            path="/checkout"
+                            element={
+                                <CustomerRoute>
+                                    <CheckoutPage />
+                                </CustomerRoute>
+                            }
+                        />
+
+                        {/* Admin pages */}
+                        <Route
+                            path="/admin/products"
+                            element={
+                                <AdminRoute>
+                                    <AdminProductListPage />
+                                </AdminRoute>
+                            }
+                        />
+                        <Route
+                            path="/admin/products/:id"
+                            element={
+                                <AdminRoute>
+                                    <ProductDetailPage />
+                                </AdminRoute>
+                            }
+                        />
+                        <Route
+                            path="/admin/products/create"
+                            element={
+                                <AdminRoute>
+                                    <CreateProductPage />
+                                </AdminRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/admin/products/edit/:id"
+                            element={
+                                <AdminRoute>
+                                    <CreateProductPage />
+                                </AdminRoute>
+                            }
+                        />
+
+                        {/* Fallback route */}
+                        <Route path="*" element={<Navigate to="/" replace />} />
+                        <Route path="/error" element={<ErrorPage />} />
+                    </Routes>
+                </Layout>
+            </BrowserRouter>
+        </ErrorBoundary>
+    );
 }
 
 export default AppRoutes;

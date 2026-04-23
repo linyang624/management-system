@@ -119,7 +119,7 @@ export default function ProductDetailPage() {
 
   // Edit action for admin
   const handleEdit = () => {
-    navigate(`/admin/products/edit/${product.id}`);
+    navigate(`/admin/products/edit/${product._id}`);
   };
 
   if (loadingProduct) {
