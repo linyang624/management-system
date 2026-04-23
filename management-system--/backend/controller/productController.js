@@ -6,7 +6,7 @@ export const createProduct = async (req, res, next) => {
         const { name, description, category, price, stock, image} = req.body;
         
         if (!name || !description || !category || price === undefined || stock === undefined) {
-            return res.status(400).json({ message: "Missing required fields" });
+            return res.status(400).json({ message: "Missing Required Fields" });
         }
 
         const product = await Product.create({
@@ -19,7 +19,7 @@ export const createProduct = async (req, res, next) => {
         });
 
         return res.status(201).json({
-            message: "Product created successfully",
+            message: "Product Created Successfully",
             product: product,
         });    
     }
@@ -71,9 +71,13 @@ export const getProductById = async (req, res, next) => {
 
 
 // update product information
-export const undateProduct = async (req, res, next) => {
+export const updateProduct = async (req, res, next) => {
     try {
         const { name, description, category, price, stock, image} = req.body;
+        
+        if (!name || !description || !category || price === undefined || stock === undefined) {
+            return res.status(400).json({ message: "Missing required fields" });
+        }
 
         const updatedProduct = await Product.findByIdAndUpdate(
             req.params.id,
@@ -98,7 +102,7 @@ export const undateProduct = async (req, res, next) => {
 // delete product
 export const deleteProduct = async (req, res, next) => {
     try {
-        const deleteProduct = await Product.findByIdAndDelete(req.params.id);
+        const deletedProduct = await Product.findByIdAndDelete(req.params.id);
 
         if (!deleteProduct) {
             return res.status(404).json({ message: "Product not found" });
