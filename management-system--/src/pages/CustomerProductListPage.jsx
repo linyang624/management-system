@@ -213,26 +213,29 @@ export default function CustomerProductListPage() {
               );
 
               return !cartItem ? (
-                <button onClick={() => handleAddToCart(product)}>
+                <button
+                  onClick={() => handleAddToCart(product)}
+                  style={primaryButtonStyle}
+                >
                   Add to Cart
                 </button>
               ) : (
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "10px",
-                  }}
-                >
-                  <button onClick={() => handleDecreaseQuantity(product.id)}>
-                    -
-                  </button>
+                <div style={qtyContainerStyle}>
+                    <button
+                      onClick={() => handleDecreaseQuantity(product.id)}
+                      style={qtyButtonStyle}
+                    >
+                      -
+                    </button>
 
-                  <span>{cartItem.quantity}</span>
+                    <span style={qtyTextStyle}>{cartItem.quantity}</span>
 
-                  <button onClick={() => handleIncreaseQuantity(product.id)}>
-                    +
-                  </button>
+                    <button
+                      onClick={() => handleIncreaseQuantity(product.id)}
+                      style={qtyButtonStyle}
+                    >
+                      +
+                    </button>
                 </div>
               );
             }}
@@ -296,4 +299,44 @@ const sortWrapperStyle = {
 const sortLabelStyle = {
   fontSize: "14px",
   color: "#374151",
+};
+
+const primaryButtonStyle = {
+  padding: "10px 14px",
+  backgroundColor: "#6366f1",
+  color: "#fff",
+  border: "none",
+  borderRadius: "6px",
+  cursor: "pointer",
+  fontSize: "14px",
+  fontWeight: "500",
+};
+
+const secondaryButtonStyle = {
+  padding: "10px 14px",
+  backgroundColor: "#fff",
+  color: "#374151",
+  border: "1px solid #d1d5db",
+  borderRadius: "6px",
+  cursor: "pointer",
+  fontSize: "14px",
+};
+
+const qtyButtonStyle = {
+  width: "28px",
+  height: "28px",
+  border: "1px solid #d1d5db",
+  backgroundColor: "#fff",
+  cursor: "pointer",
+};
+
+const qtyContainerStyle = {
+  display: "flex",
+  alignItems: "center",
+  gap: "8px",
+};
+
+const qtyTextStyle = {
+  minWidth: "20px",
+  textAlign: "center",
 };

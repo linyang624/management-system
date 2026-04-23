@@ -196,7 +196,7 @@ export default function AdminProductListPage() {
             <option value="priceDesc">Price high to low</option>
           </select>
 
-          <button onClick={handleAddProduct} style={addButtonStyle}>
+          <button onClick={handleAddProduct} style={primaryButtonStyle}>
             Add Product
           </button>
         </div>
@@ -219,22 +219,38 @@ export default function AdminProductListPage() {
               return (
                 <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
                   {!cartItem ? (
-                    <button onClick={() => handleAddToCart(product)}>
+                    <button
+                      onClick={() => handleAddToCart(product)}
+                      style={primaryButtonStyle}
+                    >
                       Add to Cart
                     </button>
                   ) : (
-                    <div style={{ display: "flex", gap: "10px" }}>
-                      <button onClick={() => handleDecreaseQuantity(product.id)}>
+                    <div style={qtyContainerStyle}>
+                      <button
+                        onClick={() => handleDecreaseQuantity(product.id)}
+                        style={qtyButtonStyle}
+                      >
                         -
                       </button>
-                      <span>{cartItem.quantity}</span>
-                      <button onClick={() => handleIncreaseQuantity(product.id)}>
+
+                      <span style={qtyTextStyle}>{cartItem.quantity}</span>
+
+                      <button
+                        onClick={() => handleIncreaseQuantity(product.id)}
+                        style={qtyButtonStyle}
+                      >
                         +
                       </button>
                     </div>
                   )}
 
-                  <button onClick={() => handleEdit(product.id)}>Edit</button>
+                  <button
+                    onClick={() => handleEdit(product.id)}
+                    style={secondaryButtonStyle}
+                  >
+                    Edit
+                  </button>
                 </div>
               );
             }}
@@ -285,11 +301,43 @@ const selectStyle = {
   padding: "10px",
 };
 
-const addButtonStyle = {
+
+const primaryButtonStyle = {
   padding: "10px 14px",
-  background: "#6366f1",
+  backgroundColor: "#6366f1",
   color: "#fff",
   border: "none",
   borderRadius: "6px",
   cursor: "pointer",
+  fontSize: "14px",
+  fontWeight: "500",
+};
+
+const secondaryButtonStyle = {
+  padding: "10px 14px",
+  backgroundColor: "#fff",
+  color: "#374151",
+  border: "1px solid #d1d5db",
+  borderRadius: "6px",
+  cursor: "pointer",
+  fontSize: "14px",
+};
+
+const qtyButtonStyle = {
+  width: "28px",
+  height: "28px",
+  border: "1px solid #d1d5db",
+  backgroundColor: "#fff",
+  cursor: "pointer",
+};
+
+const qtyContainerStyle = {
+  display: "flex",
+  alignItems: "center",
+  gap: "8px",
+};
+
+const qtyTextStyle = {
+  minWidth: "20px",
+  textAlign: "center",
 };

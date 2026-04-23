@@ -6,21 +6,7 @@ import ProductCard from "./ProductCard";
 
 export default function ProductGrid({ products, renderActions, getDetailPath }) {
   return (
-    <div
-      style={{
-        display: "grid",
-
-        /*
-          Responsive grid:
-          - auto-fill creates as many columns as possible
-          - minmax(220px, 1fr) means:
-              * card should not be smaller than 220px
-              * card can grow to fill available space
-        */
-        gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
-        gap: "16px",
-      }}
-    >
+    <div style={gridStyle}>
       {products.map((product) => (
         <ProductCard
           key={product.id}
@@ -33,3 +19,14 @@ export default function ProductGrid({ products, renderActions, getDetailPath }) 
     </div>
   );
 }
+
+/* =======================
+   Styles
+======================= */
+
+const gridStyle = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
+  gap: "24px",
+  alignItems: "stretch",
+};

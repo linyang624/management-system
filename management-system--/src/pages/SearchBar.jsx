@@ -1,4 +1,6 @@
-// Reusable search input used by both admin and customer pages.
+// Reusable search input.
+// Currently not used because product search is handled by Header.
+// Keep this component in case we need page-level search again later.
 
 export default function SearchBar({ searchTerm, onSearchChange }) {
   return (

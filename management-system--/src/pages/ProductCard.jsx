@@ -10,11 +10,7 @@ export default function ProductCard({ product, children, detailPath }) {
     <>
       {/* Show image only if image exists */}
       {product.image && (
-        <img
-          src={product.image}
-          alt={product.name}
-          style={imageStyle}
-        />
+        <img src={product.image} alt={product.name} style={imageStyle} />
       )}
 
       {/* Shared product information */}
@@ -31,10 +27,7 @@ export default function ProductCard({ product, children, detailPath }) {
   return (
     <div style={cardStyle}>
       {detailPath ? (
-        <Link
-          to={detailPath}
-          style={linkStyle}
-        >
+        <Link to={detailPath} style={linkStyle}>
           {cardContent}
         </Link>
       ) : (
@@ -60,6 +53,7 @@ const cardStyle = {
   display: "flex",
   flexDirection: "column",
   height: "100%",
+  boxSizing: "border-box",
 };
 
 const linkStyle = {
@@ -110,7 +104,7 @@ const descriptionStyle = {
 };
 
 const actionAreaStyle = {
-  marginTop: "16px",
+  marginTop: "auto",
   paddingTop: "12px",
   borderTop: "1px solid #f3f4f6",
 };
