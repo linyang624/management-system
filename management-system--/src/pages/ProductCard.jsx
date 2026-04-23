@@ -6,23 +6,33 @@ import { Link } from "react-router-dom";
 // which is passed in through "children".
 
 export default function ProductCard({ product, children, detailPath }) {
-  const imageElement = product.image ? (
-    <img
-      src={product.image}
-      alt={product.name}
-      style={{
-        width: "100%",
-        height: "180px",
-        objectFit: "cover",
-        borderRadius: "6px",
-        marginBottom: "10px",
-        cursor: detailPath ? "pointer" : "default",
-      }}
-    />
-  ) : null;
+  const cardContent = (
+    <>
+      {/* Show image only if image exists */}
+      {product.image && (
+        <img
+          src={product.image}
+          alt={product.name}
+          style={{
+            width: "100%",
+            height: "180px",
+            objectFit: "cover",
+            borderRadius: "6px",
+            marginBottom: "10px",
+            cursor: detailPath ? "pointer" : "default",
+          }}
+        />
+      )}
 
-  const titleElement = (
-    <h3 style={{ margin: "0 0 12px 0" }}>{product.name}</h3>
+      {/* Shared product information */}
+      <h3 style={{ margin: "0 0 12px 0" }}>{product.name}</h3>
+
+      <p style={{ margin: "0 0 12px 0" }}>
+        <strong>Price:</strong> ${product.price}
+      </p>
+
+      <p style={{ margin: "0 0 12px 0" }}>{product.description}</p>
+    </>
   );
 
   return (
@@ -34,25 +44,16 @@ export default function ProductCard({ product, children, detailPath }) {
         backgroundColor: "#fff",
       }}
     >
-      {/* Show image only if image exists */}
-      {detailPath ? <Link to={detailPath}>{imageElement}</Link> : imageElement}
-
-      {/* Shared product information */}
       {detailPath ? (
         <Link
           to={detailPath}
-          style={{ textDecoration: "none", color: "inherit" }}
+          style={{ textDecoration: "none", color: "inherit", display: "block" }}
         >
-          {titleElement}
+          {cardContent}
         </Link>
       ) : (
-        titleElement
+        cardContent
       )}
-
-      <p style={{ margin: "0 0 12px 0" }}>
-        <strong>Price:</strong> ${product.price}
-      </p>
-      <p style={{ margin: "0 0 12px 0" }}>{product.description}</p>
 
       {/* Dynamic action area */}
       <div style={{ marginTop: "12px" }}>{children}</div>

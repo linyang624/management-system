@@ -122,6 +122,14 @@ function AppRoutes() {
             }
           />
           <Route
+            path="/admin/products/:id"
+            element={
+              <AdminRoute>
+                <ProductDetailPage />
+              </AdminRoute>
+            }
+          />
+          <Route
             path="/admin/products/create"
             element={
               <AdminRoute>

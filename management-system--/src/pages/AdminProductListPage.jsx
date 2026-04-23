@@ -23,6 +23,7 @@ export default function AdminProductListPage() {
 
   //navigate
   const navigate = useNavigate();
+
   /*
     Filter products based on search input.
     Search checks name, description, category, and price.
@@ -66,9 +67,9 @@ export default function AdminProductListPage() {
     setCurrentPage(1);
   };
 
-  // Placeholder edit action
+  // Edit action
   const handleEdit = (productId) => {
-    console.log("Edit product:", productId);
+    navigate(`/admin/products/edit/${productId}`);
   };
 
   return (
@@ -78,7 +79,7 @@ export default function AdminProductListPage() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          marginBotton: "20px",
+          marginBottom: "20px",
         }}
       >
         <h2 style={{ margin: 0 }}>Admin Product List</h2>
@@ -86,7 +87,7 @@ export default function AdminProductListPage() {
           Add Product
         </button>
       </div>
-      
+
       <SearchBar
         searchTerm={searchTerm}
         onSearchChange={handleSearchChange}
@@ -95,8 +96,16 @@ export default function AdminProductListPage() {
       <div style={{ marginTop: "20px" }}>
         <ProductGrid
           products={paginatedProducts}
+          getDetailPath={(product) => `/admin/products/${product.id}`}
           renderActions={(product) => (
-            <button onClick={() => handleEdit(product.id)}>Edit</button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleEdit(product.id);
+              }}
+            >
+              Edit
+            </button>
           )}
         />
       </div>
