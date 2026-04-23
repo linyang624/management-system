@@ -47,9 +47,12 @@ export default function Header() {
     }
   };
 
+  //homePath
+  const homePath = isAuthenticated && user?.role === "admin" ? "/admin/products" : "/products";
+
   return (
     <header style={{ display: "flex", gap: "12px", padding: "16px" }}>
-      <Link to="/products">Management Chuwa</Link>
+      <Link to={homePath}>Management Chuwa</Link>
 
       {!isAuthenticated ? (
         <Link to="/signin">Sign In</Link>

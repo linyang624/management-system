@@ -37,43 +37,41 @@ export default function ProductDetailPage() {
   const [productError, setProductError] = useState("");
 
   // Load single product from backend
-  useEffect(() => {
-    const loadProduct = async () => {
-      try {
-        setLoadingProduct(true);
-        setProductError("");
+//   useEffect(() => {
+//     const loadProduct = async () => {
+//       try {
+//         setLoadingProduct(true);
+//         setProductError("");
 
-        const data = await getProductByIdApi(id);
-        setProduct(data);
-      } catch (error) {
-        setProductError(error.message || "Failed to load product");
-      } finally {
-        setLoadingProduct(false);
-      }
-    };
+//         const data = await getProductByIdApi(id);
+//         setProduct(data);
+//       } catch (error) {
+//         setProductError(error.message || "Failed to load product");
+//       } finally {
+//         setLoadingProduct(false);
+//       }
+//     };
 
-    loadProduct();
-  }, [id]);
+//     loadProduct();
+//   }, [id]);
 
-  // error page
+  // loading product and error page
   useEffect(() => {
     async function fetchProduct() {
         try {
-            const response = await fetch(`http://localhost:5001/api/products/${id}`);
-            const data = await response.json();
+            setLoadingProduct(true);
+            setProductError("");
 
-            if (!response.ok) {
-                navigate("/error", {
-                    state: { message: data.message || "Product not found"},
-                });
-                return;
-            }
+            const data = await getProductByIdApi(id);
             setProduct(data);
         }
         catch(error) {
             navigate("/error", {
-                state: { message: "Server error, please try again later"}
+                state: { message: error.message || "Product not found" }
             });
+        }
+        finally {
+            setLoadingProduct(false);
         }
     }
     fetchProduct();
@@ -119,7 +117,7 @@ export default function ProductDetailPage() {
 
   // Edit action for admin
   const handleEdit = () => {
-    navigate(`/admin/products/edit/${product._id}`);
+    navigate(`/admin/products/edit/${product.id}`);
   };
 
   if (loadingProduct) {
