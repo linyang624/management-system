@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { openCartDrawer, closeCartDrawer } from "../../features/cart/cartSlice";
 import { logOut, clearAuthMessage } from "../../features/auth/authSlice";
 import { calculateCartTotals } from "../../utils/cartUtils";
+//import { FiSearch, FiShoppingCart, FiUser } from "react-icons/fi";
 
 // Top navigation bar
 // Shows total cart value + toggle drawer

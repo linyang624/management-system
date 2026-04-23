@@ -11,6 +11,7 @@ import CustomerProductListPage from "../pages/CustomerProductListPage";
 import ProductDetailPage from "../pages/ProductDetailPage";
 import CreateProductPage from "../pages/CreateProductPage";
 import CheckoutPage from "../pages/CheckoutPage";
+import ErrorPage from "../pages/ErrorPage";
 
 /*
   HomeRedirect decides which home page the user should see.
@@ -149,6 +150,7 @@ function AppRoutes() {
 
           {/* Fallback route */}
           <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="/error" element={<ErrorPage />} />
         </Routes>
       </Layout>
     </BrowserRouter>

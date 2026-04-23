@@ -55,6 +55,30 @@ export default function ProductDetailPage() {
     loadProduct();
   }, [id]);
 
+  // error page
+  useEffect(() => {
+    async function fetchProduct() {
+        try {
+            const response = await fetch(`http://localhost:5001/api/products/${id}`);
+            const data = await response.json();
+
+            if (!response.ok) {
+                navigate("/error", {
+                    state: { message: data.message || "Product not found"},
+                });
+                return;
+            }
+            setProduct(data);
+        }
+        catch(error) {
+            navigate("/error", {
+                state: { message: "Server error, please try again later"}
+            });
+        }
+    }
+    fetchProduct();
+  }, [id, navigate]);
+
   // Check whether this product is already in cart
   const cartItem = product
     ? userCart.items.find((item) => item.id === product.id)
