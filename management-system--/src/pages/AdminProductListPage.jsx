@@ -1,6 +1,12 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import products from "../mock/products";
+import {
+  addToCart,
+  increaseQuantity,
+  decreaseQuantity,
+} from "../features/cart/cartSlice";
 import SearchBar from "./SearchBar";
 import ProductGrid from "./ProductGrid";
 import Pagination from "./Pagination";
@@ -13,20 +19,34 @@ const PRODUCTS_PER_PAGE = 8;
 // - search
 // - sort
 // - pagination
-// - Edit button on each card
 // - Add Product button at the top
+// - Add to Cart / quantity controls
+// - Edit button on each card
 
 export default function AdminProductListPage() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // Current auth info
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const username = user?.email || "guest";
+
+  // Current user's cart from cartsByUser
+  const userCart = useSelector(
+    (state) =>
+      state.cart.cartsByUser?.[username] || {
+        items: [],
+        promoCode: "",
+        discountRate: 0,
+        promoMessage: "",
+        promoError: "",
+      }
+  );
 
   // Search input state
   const [searchTerm, setSearchTerm] = useState("");
 
   // Sort dropdown state
-  // Options:
-  // - default => Last added
-  // - priceAsc => Price low to high
-  // - priceDesc => Price high to low
   const [sortOrder, setSortOrder] = useState("default");
 
   // Current page number
@@ -70,7 +90,6 @@ export default function AdminProductListPage() {
     } else if (sortOrder === "priceDesc") {
       result.sort((a, b) => b.price - a.price);
     }
-    // "default" means keep original order = Last added
 
     return result;
   }, [searchTerm, sortOrder]);
@@ -100,14 +119,47 @@ export default function AdminProductListPage() {
     setCurrentPage(1);
   };
 
-  // Placeholder edit action
-  const handleEdit = (productId) => {
-    console.log("Edit product:", productId);
-  };
-
   // Go to create product page
   const handleAddProduct = () => {
     navigate("/admin/products/create");
+  };
+
+  // Edit action
+  const handleEdit = (productId) => {
+    navigate(`/admin/products/edit/${productId}`);
+  };
+
+  // Add to cart
+  const handleAddToCart = (product) => {
+    if (!isAuthenticated) {
+      alert("Please sign in first.");
+      navigate("/signin");
+      return;
+    }
+
+    dispatch(addToCart({ username, product }));
+  };
+
+  // Increase quantity
+  const handleIncreaseQuantity = (productId) => {
+    if (!isAuthenticated) {
+      alert("Please sign in first.");
+      navigate("/signin");
+      return;
+    }
+
+    dispatch(increaseQuantity({ username, productId }));
+  };
+
+  // Decrease quantity
+  const handleDecreaseQuantity = (productId) => {
+    if (!isAuthenticated) {
+      alert("Please sign in first.");
+      navigate("/signin");
+      return;
+    }
+
+    dispatch(decreaseQuantity({ username, productId }));
   };
 
   return (
@@ -129,32 +181,62 @@ export default function AdminProductListPage() {
           onSearchChange={handleSearchChange}
         />
 
-        <select
-          value={sortOrder}
-          onChange={handleSortChange}
-          style={{
-            padding: "10px",
-            border: "1px solid #ccc",
-            borderRadius: "6px",
-          }}
-        >
+        <select value={sortOrder} onChange={handleSortChange}>
           <option value="default">Last added</option>
-          <option value="priceAsc">Price: low to high</option>
-          <option value="priceDesc">Price: high to low</option>
+          <option value="priceAsc">Price low to high</option>
+          <option value="priceDesc">Price high to low</option>
         </select>
 
         <button onClick={handleAddProduct}>Add Product</button>
       </div>
 
-      {/* Reusable product grid */}
       <ProductGrid
         products={paginatedProducts}
-        renderActions={(product) => (
-          <button onClick={() => handleEdit(product.id)}>Edit</button>
-        )}
+        getDetailPath={(product) => `/admin/products/${product.id}`}
+        renderActions={(product) => {
+          const cartItem = userCart.items.find(
+            (item) => item.id === product.id
+          );
+
+          return (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                flexWrap: "wrap",
+              }}
+            >
+              {!cartItem ? (
+                <button onClick={() => handleAddToCart(product)}>
+                  Add to Cart
+                </button>
+              ) : (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                  }}
+                >
+                  <button onClick={() => handleDecreaseQuantity(product.id)}>
+                    -
+                  </button>
+
+                  <span>{cartItem.quantity}</span>
+
+                  <button onClick={() => handleIncreaseQuantity(product.id)}>
+                    +
+                  </button>
+                </div>
+              )}
+
+              <button onClick={() => handleEdit(product.id)}>Edit</button>
+            </div>
+          );
+        }}
       />
 
-      {/* Reusable pagination */}
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
