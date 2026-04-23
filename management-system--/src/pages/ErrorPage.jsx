@@ -4,7 +4,8 @@ function ErrorPage() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const message = location.state?.message || "Oops, something went wrong!"
+    //const message = location.state?.message || "Oops, something went wrong!"
+    const message = "Oops, something went wrong!"
 
     return (
         <div>
