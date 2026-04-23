@@ -5,11 +5,11 @@ import { verifyToken, checkAdmin } from "../middlewares/auth.js";
 import { createProductValidation, updateProductValidation } from '../middlewares/productValidators.js';
 const router = express.Router();
 
-//auth routes
-router.post('/signin', signInValidation, validate, signIn);
-router.post('/signup', signUpValidation, validate,signUp);
-router.put('/update-password', updatePasswordValidation, validate, updatePassword);
-router.post('/logout', logOut);
+//product routes
+router.post('/', verifyToken, checkAdmin, createProductValidation, validate, createProduct);
+router.get('/', getProducts);
+router.get('/:id', getProductById);
+router.put('/:id', verifyToken, checkAdmin, updateProductValidation, validate, updateProduct);
+router.delete('/:id', verifyToken, checkAdmin, deleteProduct);
 
-//module.exports = router;
 export default router;
