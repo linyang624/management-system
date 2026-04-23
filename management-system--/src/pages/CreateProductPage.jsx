@@ -241,6 +241,7 @@ export default function CreateProductPage() {
               placeholder="Enter price"
               style={inputStyle}
               min="0"
+              step="0.01"
               required
             />
           </div>
