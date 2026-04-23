@@ -12,7 +12,7 @@ import ProductGrid from "./ProductGrid";
 import Pagination from "./Pagination";
 
 // Number of products shown on each page
-const PRODUCTS_PER_PAGE = 8;
+const PRODUCTS_PER_PAGE = 10;
 
 // Admin product list page
 // Features:
