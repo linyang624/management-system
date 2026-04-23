@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addToCart,
@@ -7,7 +7,6 @@ import {
   decreaseQuantity,
 } from "../features/cart/cartSlice";
 import { getProductsApi } from "../api/productApi";
-import SearchBar from "./SearchBar";
 import ProductGrid from "./ProductGrid";
 import Pagination from "./Pagination";
 
@@ -18,11 +17,12 @@ const PRODUCTS_PER_PAGE = 8;
 // Requirements:
 // - no Edit button
 // - has cart actions
-// - reuses SearchBar, ProductGrid, Pagination
+// - reuses ProductGrid, Pagination
 
 export default function CustomerProductListPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Current auth info
   const { isAuthenticated, user } = useSelector((state) => state.auth);
@@ -84,6 +84,17 @@ export default function CustomerProductListPage() {
   }, [sortOrder]);
 
   /*
+    Sync searchTerm from URL query string.
+    Example: /products?keyword=apple
+  */
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const keyword = params.get("keyword") || "";
+    setSearchTerm(keyword);
+    setCurrentPage(1);
+  }, [location.search]);
+
+  /*
     Filter products by search text.
   */
   const filteredProducts = useMemo(() => {
@@ -118,12 +129,6 @@ export default function CustomerProductListPage() {
 
     return filteredProducts.slice(startIndex, endIndex);
   }, [filteredProducts, currentPage]);
-
-  // Search input handler
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-    setCurrentPage(1);
-  };
 
   // Sort dropdown handler
   const handleSortChange = (e) => {
@@ -165,29 +170,32 @@ export default function CustomerProductListPage() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>Customer Product List</h2>
+    <div style={pageContainerStyle}>
+      <h2 style={pageTitleStyle}>Products</h2>
 
-      {/* Search + Sort */}
-      <div
-        style={{
-          display: "flex",
-          gap: "12px",
-          flexWrap: "wrap",
-          alignItems: "center",
-          marginBottom: "20px",
-        }}
-      >
-        <SearchBar
-          searchTerm={searchTerm}
-          onSearchChange={handleSearchChange}
-        />
+      {/* Sort */}
+      {/* Toolbar */}
+      <div style={toolbarStyle}>
+        <div style={resultTextStyle}>
+          Showing {filteredProducts.length} product
+          {filteredProducts.length !== 1 ? "s" : ""}
+        </div>
 
-        <select value={sortOrder} onChange={handleSortChange}>
-          <option value="default">Last added</option>
-          <option value="priceAsc">Price low to high</option>
-          <option value="priceDesc">Price high to low</option>
-        </select>
+        <div style={sortWrapperStyle}>
+          <label htmlFor="sort" style={sortLabelStyle}>
+            Sort by:
+          </label>
+          <select
+            id="sort"
+            value={sortOrder}
+            onChange={handleSortChange}
+            style={selectStyle}
+          >
+            <option value="default">Last added</option>
+            <option value="priceAsc">Price low to high</option>
+            <option value="priceDesc">Price high to low</option>
+          </select>
+        </div>
       </div>
 
       {loadingProducts ? (
@@ -240,3 +248,52 @@ export default function CustomerProductListPage() {
     </div>
   );
 }
+
+/* =======================
+   Styles
+======================= */
+
+const pageContainerStyle = {
+  maxWidth: "1200px",
+  margin: "0 auto",
+  padding: "24px",
+};
+
+const pageTitleStyle = {
+  fontSize: "32px",
+  marginBottom: "20px",
+};
+
+
+const selectStyle = {
+  padding: "10px 12px",
+  borderRadius: "6px",
+  border: "1px solid #d1d5db",
+  fontSize: "14px",
+  backgroundColor: "#fff",
+};
+
+const toolbarStyle = {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  gap: "16px",
+  marginBottom: "24px",
+  flexWrap: "wrap",
+};
+
+const resultTextStyle = {
+  fontSize: "15px",
+  color: "#6b7280",
+};
+
+const sortWrapperStyle = {
+  display: "flex",
+  alignItems: "center",
+  gap: "8px",
+};
+
+const sortLabelStyle = {
+  fontSize: "14px",
+  color: "#374151",
+};

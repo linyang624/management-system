@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addToCart,
@@ -7,7 +7,6 @@ import {
   decreaseQuantity,
 } from "../features/cart/cartSlice";
 import { getProductsApi } from "../api/productApi";
-import SearchBar from "./SearchBar";
 import ProductGrid from "./ProductGrid";
 import Pagination from "./Pagination";
 
@@ -16,7 +15,7 @@ const PRODUCTS_PER_PAGE = 8;
 
 // Admin product list page
 // Features:
-// - search
+// - search (via header)
 // - sort
 // - pagination
 // - Add Product button at the top
@@ -26,6 +25,7 @@ const PRODUCTS_PER_PAGE = 8;
 export default function AdminProductListPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
 
   // Current auth info
   const { isAuthenticated, user } = useSelector((state) => state.auth);
@@ -48,7 +48,7 @@ export default function AdminProductListPage() {
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [productError, setProductError] = useState("");
 
-  // Search input state
+  // Search keyword from URL
   const [searchTerm, setSearchTerm] = useState("");
 
   // Sort dropdown state
@@ -87,6 +87,16 @@ export default function AdminProductListPage() {
   }, [sortOrder]);
 
   /*
+    Sync searchTerm from URL query string.
+  */
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const keyword = params.get("keyword") || "";
+    setSearchTerm(keyword);
+    setCurrentPage(1);
+  }, [location.search]);
+
+  /*
     Filter products by search text.
   */
   const filteredProducts = useMemo(() => {
@@ -119,12 +129,6 @@ export default function AdminProductListPage() {
 
     return filteredProducts.slice(startIndex, endIndex);
   }, [filteredProducts, currentPage]);
-
-  // Search input change
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-    setCurrentPage(1);
-  };
 
   // Sort dropdown change
   const handleSortChange = (e) => {
@@ -176,31 +180,26 @@ export default function AdminProductListPage() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>Admin Product List</h2>
+    <div style={pageContainerStyle}>
+      <h2 style={pageTitleStyle}>Admin Products</h2>
 
-      {/* Search + Sort + Add Product */}
-      <div
-        style={{
-          display: "flex",
-          gap: "12px",
-          flexWrap: "wrap",
-          alignItems: "center",
-          marginBottom: "20px",
-        }}
-      >
-        <SearchBar
-          searchTerm={searchTerm}
-          onSearchChange={handleSearchChange}
-        />
+      {/* Toolbar: result + sort + add product */}
+      <div style={toolbarStyle}>
+        <div style={resultTextStyle}>
+          Showing {filteredProducts.length} products
+        </div>
 
-        <select value={sortOrder} onChange={handleSortChange}>
-          <option value="default">Last added</option>
-          <option value="priceAsc">Price low to high</option>
-          <option value="priceDesc">Price high to low</option>
-        </select>
+        <div style={rightToolbarStyle}>
+          <select value={sortOrder} onChange={handleSortChange} style={selectStyle}>
+            <option value="default">Last added</option>
+            <option value="priceAsc">Price low to high</option>
+            <option value="priceDesc">Price high to low</option>
+          </select>
 
-        <button onClick={handleAddProduct}>Add Product</button>
+          <button onClick={handleAddProduct} style={addButtonStyle}>
+            Add Product
+          </button>
+        </div>
       </div>
 
       {loadingProducts ? (
@@ -218,32 +217,17 @@ export default function AdminProductListPage() {
               );
 
               return (
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "10px",
-                    flexWrap: "wrap",
-                  }}
-                >
+                <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
                   {!cartItem ? (
                     <button onClick={() => handleAddToCart(product)}>
                       Add to Cart
                     </button>
                   ) : (
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "10px",
-                      }}
-                    >
+                    <div style={{ display: "flex", gap: "10px" }}>
                       <button onClick={() => handleDecreaseQuantity(product.id)}>
                         -
                       </button>
-
                       <span>{cartItem.quantity}</span>
-
                       <button onClick={() => handleIncreaseQuantity(product.id)}>
                         +
                       </button>
@@ -266,3 +250,46 @@ export default function AdminProductListPage() {
     </div>
   );
 }
+
+/* styles */
+const pageContainerStyle = {
+  maxWidth: "1200px",
+  margin: "0 auto",
+  padding: "24px",
+};
+
+const pageTitleStyle = {
+  fontSize: "32px",
+  marginBottom: "20px",
+};
+
+const toolbarStyle = {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  marginBottom: "24px",
+  flexWrap: "wrap",
+};
+
+const resultTextStyle = {
+  fontSize: "14px",
+  color: "#6b7280",
+};
+
+const rightToolbarStyle = {
+  display: "flex",
+  gap: "12px",
+};
+
+const selectStyle = {
+  padding: "10px",
+};
+
+const addButtonStyle = {
+  padding: "10px 14px",
+  background: "#6366f1",
+  color: "#fff",
+  border: "none",
+  borderRadius: "6px",
+  cursor: "pointer",
+};

@@ -13,41 +13,27 @@ export default function ProductCard({ product, children, detailPath }) {
         <img
           src={product.image}
           alt={product.name}
-          style={{
-            width: "100%",
-            height: "180px",
-            objectFit: "cover",
-            borderRadius: "6px",
-            marginBottom: "10px",
-            cursor: detailPath ? "pointer" : "default",
-          }}
+          style={imageStyle}
         />
       )}
 
       {/* Shared product information */}
-      <h3 style={{ margin: "0 0 12px 0" }}>{product.name}</h3>
+      <div style={contentStyle}>
+        <h3 style={titleStyle}>{product.name}</h3>
 
-      <p style={{ margin: "0 0 12px 0" }}>
-        <strong>Price:</strong> ${product.price}
-      </p>
+        <p style={priceStyle}>${Number(product.price).toFixed(2)}</p>
 
-      <p style={{ margin: "0 0 12px 0" }}>{product.description}</p>
+        <p style={descriptionStyle}>{product.description}</p>
+      </div>
     </>
   );
 
   return (
-    <div
-      style={{
-        border: "1px solid #ccc",
-        borderRadius: "8px",
-        padding: "12px",
-        backgroundColor: "#fff",
-      }}
-    >
+    <div style={cardStyle}>
       {detailPath ? (
         <Link
           to={detailPath}
-          style={{ textDecoration: "none", color: "inherit", display: "block" }}
+          style={linkStyle}
         >
           {cardContent}
         </Link>
@@ -56,7 +42,75 @@ export default function ProductCard({ product, children, detailPath }) {
       )}
 
       {/* Dynamic action area */}
-      <div style={{ marginTop: "12px" }}>{children}</div>
+      <div style={actionAreaStyle}>{children}</div>
     </div>
   );
 }
+
+/* =======================
+   Styles
+======================= */
+
+const cardStyle = {
+  border: "1px solid #e5e7eb",
+  borderRadius: "10px",
+  padding: "12px",
+  backgroundColor: "#fff",
+  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.06)",
+  display: "flex",
+  flexDirection: "column",
+  height: "100%",
+};
+
+const linkStyle = {
+  textDecoration: "none",
+  color: "inherit",
+  display: "block",
+};
+
+const imageStyle = {
+  width: "100%",
+  height: "220px",
+  objectFit: "cover",
+  borderRadius: "8px",
+  marginBottom: "12px",
+  cursor: "pointer",
+};
+
+const contentStyle = {
+  display: "flex",
+  flexDirection: "column",
+  gap: "8px",
+};
+
+const titleStyle = {
+  margin: 0,
+  fontSize: "18px",
+  fontWeight: "600",
+  lineHeight: 1.3,
+};
+
+const priceStyle = {
+  margin: 0,
+  fontSize: "22px",
+  fontWeight: "700",
+  color: "#111827",
+};
+
+const descriptionStyle = {
+  margin: 0,
+  fontSize: "14px",
+  color: "#6b7280",
+  lineHeight: 1.5,
+  display: "-webkit-box",
+  WebkitLineClamp: 2,
+  WebkitBoxOrient: "vertical",
+  overflow: "hidden",
+  minHeight: "42px",
+};
+
+const actionAreaStyle = {
+  marginTop: "16px",
+  paddingTop: "12px",
+  borderTop: "1px solid #f3f4f6",
+};
