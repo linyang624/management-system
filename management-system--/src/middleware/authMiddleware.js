@@ -1,13 +1,13 @@
 import {
   saveAuthToStorage,
   clearAuthFromStorage,
-} from '../utils/authStorage.js';
-import { signIn, signUp, logOut } from '../features/auth/authSlice.js';
+} from "../utils/authStorage.js";
+import { signIn, logOut } from "../features/auth/authSlice.js";
 
 const authMiddleware = (store) => (next) => (action) => {
   const result = next(action);
 
-  if (signIn.fulfilled.match(action) || signUp.fulfilled.match(action)) {
+  if (signIn.fulfilled.match(action)) {
     const { user, token, isAuthenticated } = store.getState().auth;
 
     saveAuthToStorage({
@@ -17,7 +17,7 @@ const authMiddleware = (store) => (next) => (action) => {
     });
   }
 
-  if (logOut.fulfilled.match(action)) {
+  if (logOut.fulfilled.match(action) || logOut.rejected.match(action)) {
     clearAuthFromStorage();
   }
 

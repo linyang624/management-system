@@ -1,16 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import products from "../mock/products";
-
-// CreateProductPage is used by admin to add a new product.
-// It also supports edit mode when route contains product id.
-// It contains a simple controlled form with:
-// - product name
-// - description
-// - category
-// - price
-// - stock quantity
-// - image upload / image preview
+import { useSelector } from "react-redux";
+import {
+  getProductByIdApi,
+  createProductApi,
+  updateProductApi,
+  deleteProductApi,
+} from "../api/productApi";
 
 export default function CreateProductPage() {
   const navigate = useNavigate();
@@ -18,12 +14,8 @@ export default function CreateProductPage() {
 
   const isEditMode = Boolean(id);
 
-  // Find current product in edit mode
-  const existingProduct = isEditMode
-    ? products.find((item) => item.id === Number(id))
-    : null;
+  const { token } = useSelector((state) => state.auth);
 
-  // Store all form input values in one state object
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -34,32 +26,43 @@ export default function CreateProductPage() {
     imageFile: null,
   });
 
-  // Store preview image URL for display
   const [previewImage, setPreviewImage] = useState("");
+  const [loadingProduct, setLoadingProduct] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [pageError, setPageError] = useState("");
+  const [existingProduct, setExistingProduct] = useState(null);
 
-  /*
-    When in edit mode, preload form inputs with existing product data.
-  */
   useEffect(() => {
-    if (isEditMode && existingProduct) {
-      setFormData({
-        name: existingProduct.name || "",
-        description: existingProduct.description || "",
-        category: existingProduct.category || "Category1",
-        price: existingProduct.price ?? "",
-        stock: existingProduct.stock ?? "",
-        imageLink: existingProduct.image || "",
-        imageFile: null,
-      });
+    const loadProduct = async () => {
+      if (!isEditMode) return;
 
-      setPreviewImage(existingProduct.image || "");
-    }
-  }, [isEditMode, existingProduct]);
+      try {
+        setLoadingProduct(true);
+        setPageError("");
 
-  /*
-    Handle text, textarea, and select input changes.
-    The input's name attribute is used as the key in formData.
-  */
+        const product = await getProductByIdApi(id);
+
+        setExistingProduct(product);
+        setFormData({
+          name: product.name || "",
+          description: product.description || "",
+          category: product.category || "Category1",
+          price: product.price ?? "",
+          stock: product.stock ?? "",
+          imageLink: product.image || "",
+          imageFile: null,
+        });
+        setPreviewImage(product.image || "");
+      } catch (error) {
+        setPageError(error.message || "Failed to load product");
+      } finally {
+        setLoadingProduct(false);
+      }
+    };
+
+    loadProduct();
+  }, [id, isEditMode]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -68,17 +71,11 @@ export default function CreateProductPage() {
       [name]: value,
     }));
 
-    // If admin types an image link manually, use it as preview
     if (name === "imageLink") {
       setPreviewImage(value);
     }
   };
 
-  /*
-    Handle image file selection from local computer.
-    URL.createObjectURL(file) creates a temporary preview URL
-    so the selected image can be shown immediately.
-  */
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
 
@@ -93,55 +90,40 @@ export default function CreateProductPage() {
     setPreviewImage(URL.createObjectURL(file));
   };
 
-  /*
-    Handle form submission.
-
-    Create mode:
-    - creates a new product object
-
-    Edit mode:
-    - creates an updated product object
-
-    Right now we just print data to console.
-    Later this can be connected to:
-    - Redux
-    - backend API
-    - database
-  */
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const productData = {
-      id: isEditMode ? existingProduct.id : Date.now(),
-      name: formData.name,
-      description: formData.description,
-      category: formData.category,
-      price: Number(formData.price),
-      stock: Number(formData.stock),
-      image: previewImage,
-    };
+    try {
+      setSubmitting(true);
+      setPageError("");
 
-    if (isEditMode) {
-      console.log("Updated product:", productData);
-      alert("Product updated (mock only).");
-    } else {
-      console.log("New product:", productData);
-      alert("Product created (mock only).");
+      const productData = {
+        name: formData.name.trim(),
+        description: formData.description.trim(),
+        category: formData.category,
+        price: Number(formData.price),
+        stock: Number(formData.stock),
+        image: previewImage || formData.imageLink.trim(),
+      };
+
+      if (isEditMode) {
+        await updateProductApi(id, productData, token);
+        alert("Product updated successfully.");
+      } else {
+        await createProductApi(productData, token);
+        alert("Product created successfully.");
+      }
+
+      navigate("/admin/products");
+    } catch (error) {
+      setPageError(error.message || "Failed to save product");
+    } finally {
+      setSubmitting(false);
     }
-
-    navigate("/admin/products");
   };
 
-  /*
-    Handle product deletion in edit mode.
-    Right now we just print product id to console.
-    Later this can be connected to:
-    - Redux
-    - backend API
-    - database
-  */
-  const handleDelete = () => {
-    if (!existingProduct) return;
+  const handleDelete = async () => {
+    if (!isEditMode) return;
 
     const confirmed = window.confirm(
       "Are you sure you want to delete this product?"
@@ -149,15 +131,32 @@ export default function CreateProductPage() {
 
     if (!confirmed) return;
 
-    console.log("Deleted product id:", existingProduct.id);
-    alert("Product deleted (mock only).");
-    navigate("/admin/products");
+    try {
+      setSubmitting(true);
+      setPageError("");
+
+      await deleteProductApi(id, token);
+      alert("Product deleted successfully.");
+      navigate("/admin/products");
+    } catch (error) {
+      setPageError(error.message || "Failed to delete product");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  if (isEditMode && !existingProduct) {
+  if (loadingProduct) {
     return (
       <div style={{ padding: "20px" }}>
-        <h2>Product not found.</h2>
+        <h2>Loading product...</h2>
+      </div>
+    );
+  }
+
+  if (isEditMode && pageError && !existingProduct) {
+    return (
+      <div style={{ padding: "20px" }}>
+        <h2 style={{ color: "red" }}>{pageError}</h2>
       </div>
     );
   }
@@ -179,7 +178,10 @@ export default function CreateProductPage() {
           boxShadow: "0 0 8px rgba(0, 0, 0, 0.08)",
         }}
       >
-        {/* Product name */}
+        {pageError && (
+          <p style={{ color: "red", marginBottom: "16px" }}>{pageError}</p>
+        )}
+
         <div style={{ marginBottom: "16px" }}>
           <label style={{ display: "block", marginBottom: "6px" }}>
             Product name
@@ -195,7 +197,6 @@ export default function CreateProductPage() {
           />
         </div>
 
-        {/* Product description */}
         <div style={{ marginBottom: "16px" }}>
           <label style={{ display: "block", marginBottom: "6px" }}>
             Product Description
@@ -211,7 +212,6 @@ export default function CreateProductPage() {
           />
         </div>
 
-        {/* Category + Price */}
         <div style={twoColumnWrapperStyle}>
           <div style={{ flex: 1 }}>
             <label style={{ display: "block", marginBottom: "6px" }}>
@@ -246,7 +246,6 @@ export default function CreateProductPage() {
           </div>
         </div>
 
-        {/* Stock + Image link */}
         <div style={twoColumnWrapperStyle}>
           <div style={{ flex: 1 }}>
             <label style={{ display: "block", marginBottom: "6px" }}>
@@ -279,7 +278,6 @@ export default function CreateProductPage() {
           </div>
         </div>
 
-        {/* Upload image button */}
         <div style={{ marginBottom: "16px" }}>
           <label style={{ display: "block", marginBottom: "6px" }}>
             Upload Product Image
@@ -293,7 +291,6 @@ export default function CreateProductPage() {
           />
         </div>
 
-        {/* Image preview */}
         <div
           style={{
             marginBottom: "20px",
@@ -322,7 +319,6 @@ export default function CreateProductPage() {
           )}
         </div>
 
-        {/* Submit / Delete buttons */}
         <div
           style={{
             display: "flex",
@@ -333,6 +329,7 @@ export default function CreateProductPage() {
         >
           <button
             type="submit"
+            disabled={submitting}
             style={{
               padding: "10px 18px",
               backgroundColor: "#5a54f9",
@@ -342,13 +339,18 @@ export default function CreateProductPage() {
               cursor: "pointer",
             }}
           >
-            {isEditMode ? "Update Product" : "Create Product"}
+            {submitting
+              ? "Saving..."
+              : isEditMode
+              ? "Update Product"
+              : "Create Product"}
           </button>
 
           {isEditMode && (
             <button
               type="button"
               onClick={handleDelete}
+              disabled={submitting}
               style={{
                 padding: "10px 18px",
                 backgroundColor: "#e5484d",
@@ -367,7 +369,6 @@ export default function CreateProductPage() {
   );
 }
 
-// Shared input style for cleaner code reuse
 const inputStyle = {
   width: "100%",
   padding: "10px",
@@ -376,7 +377,6 @@ const inputStyle = {
   boxSizing: "border-box",
 };
 
-// Shared layout style for rows that contain two inputs
 const twoColumnWrapperStyle = {
   display: "grid",
   gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",

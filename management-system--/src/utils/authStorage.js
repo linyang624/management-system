@@ -1,17 +1,21 @@
-const AUTH_STORAGE_KEY = 'auth';
+const AUTH_STORAGE_KEY = "auth";
 
 export function saveAuthToStorage(authData) {
   localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authData));
 }
 
 export function getAuthFromStorage() {
-  const data = localStorage.getItem(AUTH_STORAGE_KEY);
+  try {
+    const data = localStorage.getItem(AUTH_STORAGE_KEY);
 
-  if (!data) {
+    if (!data) {
+      return null;
+    }
+
+    return JSON.parse(data);
+  } catch (error) {
     return null;
   }
-
-  return JSON.parse(data);
 }
 
 export function clearAuthFromStorage() {
