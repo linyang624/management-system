@@ -30,6 +30,10 @@ function AuthForm({ mode }) {
     //mobile responsive
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
+    // sign-in error
+    const [authErrorMessage, setAuthErrorMessage] = useState("");
+
+    // mobile resposive
     useEffect(() => {
         const handleResize = () => {
             setIsMobile(window.innerWidth <= 768);
@@ -40,10 +44,12 @@ function AuthForm({ mode }) {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
+
     useEffect(() => {
         dispatch(clearAuthMessage());
         setIsSubmitted(false);
         setFormErrors({});
+        setAuthErrorMessage("");
         setFormData({
             email: '',
             password: '',
@@ -64,6 +70,7 @@ function AuthForm({ mode }) {
     };
 
     const handleSubmit = async (event) => {
+        setAuthErrorMessage("");
         event.preventDefault();
 
         dispatch(clearAuthMessage());
@@ -105,12 +112,16 @@ function AuthForm({ mode }) {
                 ).unwrap();
             }
         } catch (err) {
-            console.error(err);
+            if (mode === "signin") {
+                setAuthErrorMessage('There is an error with your email and/or password. Please try again or click "Forgot Password?".');
+            }
+            else {
+                console.error(err);
+            }
         }
     };
 
     if (mode === 'updatePassword' && isSubmitted) {
-
         return (
             <div style={styles.page}>
                 <div style={styles.card}>
@@ -120,7 +131,6 @@ function AuthForm({ mode }) {
             </div>
         );
     }
-
 
 
     const titleMap = {
@@ -143,6 +153,13 @@ function AuthForm({ mode }) {
                 </button>
                 <h1 style={styles.title}>{titleMap[mode]}</h1>
 
+                {/* sign-in error */}
+                {mode === "signin" && authErrorMessage && (
+                    <p style={styles.authErrorBanner}>
+                        {authErrorMessage}
+                    </p>
+                )}
+
                 {mode === "updatePassword" && (
                     <p style={styles.subtitle}>
                         Enter your email, and we will send you the recovery link.
@@ -157,9 +174,9 @@ function AuthForm({ mode }) {
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
-                            style={styles.input}
+                            style={{ ...styles.input, ...((formErrors.email || authErrorMessage) ? styles.inputError : {}), }}
                         />
-                        {formErrors.email && <p>{formErrors.email}</p>}
+                        {formErrors.email && <p style={styles.errorText}>{formErrors.email}</p>}
                     </div>
 
                     {mode !== 'updatePassword' && (
@@ -171,14 +188,14 @@ function AuthForm({ mode }) {
                                     name="password"
                                     value={formData.password}
                                     onChange={handleChange}
-                                    style={styles.passwordInput}
+                                    style={{ ...styles.passwordInput, ...((formErrors.password || authErrorMessage) ? styles.inputError : {}), }}
                                 />
                                 <button type="button" onClick={() => setShowPassword((prev) => !prev)}
                                     style={styles.showButton}>
                                     {showPassword ? "Hide" : "Show"}
                                 </button>
                             </div>
-                            {formErrors.password && <p>{formErrors.password}</p>}
+                            {formErrors.password && <p style={styles.errorText}>{formErrors.password}</p>}
                         </div>
                     )}
 
@@ -187,7 +204,7 @@ function AuthForm({ mode }) {
                     </button>
                 </form>
 
-                {error && <p>{error}</p>}
+                {mode !== "signin" && error && <p>{error}</p>}
                 {successMessage && mode !== 'updatePassword' && <p>{successMessage}</p>}
 
                 {mode === 'signin' && (
@@ -230,7 +247,7 @@ const styles = {
 
     },
     page: {
-        minHeight: "80vh",
+        minHeight: "100vh",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -372,6 +389,23 @@ const styles = {
         fontSize: "14px",
         padding: 0,
         textDecoration: "underline",
+    },
+    inputError: {
+        border: "1px solid #ff5a4f",
+    },
+    errorText: {
+        margin: 0,
+        fontSize: "12px",
+        color: "#ff5a4f",
+        textAlign: "right",
+        fontFamily: "Arial, sans-serif",
+    },
+    authErrorBanner: {
+        margin: "0 0 20px 0",
+        fontSize: "14px",
+        lineHeight: "1.5",
+        color: "#d92d20",
+        textAlign: "left",
     },
 };
 
