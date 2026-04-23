@@ -24,6 +24,9 @@ function AuthForm({ mode }) {
     const [formErrors, setFormErrors] = useState({});
     const [isSubmitted, setIsSubmitted] = useState(false);
 
+    //show password
+    const [showPassword, setShowPassword] = useState(false);
+
     useEffect(() => {
         dispatch(clearAuthMessage());
         setIsSubmitted(false);
@@ -148,14 +151,20 @@ function AuthForm({ mode }) {
 
                     {mode !== 'updatePassword' && (
                         <div style={styles.field}>
-                            <label>Password</label>
-                            <input
-                                type="password"
-                                name="password"
-                                value={formData.password}
-                                onChange={handleChange}
-                                style={styles.input}
-                            />
+                            <label style={styles.label}>Password</label>
+                            <div style={styles.passwordWrapper}>
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    name="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    style={styles.passwordInput}
+                                />
+                                <button type="button" onClick={() => setShowPassword((prev) => !prev)}
+                                    style={styles.showButton}>
+                                    {showPassword ? "Hide" : " Show"}
+                                </button>
+                            </div>
                             {formErrors.password && <p>{formErrors.password}</p>}
                         </div>
                     )}
@@ -169,13 +178,16 @@ function AuthForm({ mode }) {
                 {successMessage && mode !== 'updatePassword' && <p>{successMessage}</p>}
 
                 {mode === 'signin' && (
-                    <div>
-                        <p>
-                            Don&apos;t have an account? <Link to="/signup">Sign up</Link>
-                        </p>
-                        <p>
-                            <Link to="/update-password">Forgot password?</Link>
-                        </p>
+                    <div style={styles.authLinksRow}>
+                        <div style={styles.inlineTextRow}>
+
+                            <label style={styles.label}>Don&apos;t have an account?</label>
+                            <Link to="/signup" style={styles.link}>Sign up</Link>
+                        </div>
+
+                        <Link to="/update-password" style={styles.link}>Forgot password?</Link>
+
+
                     </div>
                 )}
 
@@ -219,7 +231,7 @@ const styles = {
     card: {
         width: "100%",
         maxWidth: "500px",
-        minHeight: "350px",
+        minHeight: "400px",
         backgroundColor: "#ffffff",
         borderRadius: "12px",
         padding: "40px 36px",
@@ -292,6 +304,55 @@ const styles = {
         color: "#333",
         cursor: "pointer",
         lineHeight: 1,
+    },
+    link: {
+        fontFamily: "Inter, Arial, sans-serif",
+        fontSize: "14px",
+        color: "#4f46e5",
+        textDecoration: "underline",
+        fontWeight: "500",
+    },
+    authLinksRow: {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginTop: "20px",
+        gap: "16px",
+        flexWrap: "wrap",
+
+    },
+    inlineTextRow: {
+        display: "flex",
+        alignItems: "center",
+        gap: "4px",
+    },
+    passwordWrapper: {
+        position: "relative",
+        width: "100%",
+    },
+    passwordInput: {
+        width: "100%",
+        boxSizing: "border-box",
+        padding: "12px 60px 12px 14px",
+        height: "44px",
+        border: "1px solid #d1d5db",
+        borderRadius: "6px",
+        outline: "none",
+        fontSize: "14px",
+        backgroundColor: "#ffffff",
+    },
+    showButton: {
+        position: "absolute",
+        right: "12px",
+        top: "50%",
+        transform: "translateY(-50%)",
+        background: "none",
+        border: "none",
+        color: "#6b7280",
+        cursor: "pointer",
+        fontSize: "14px",
+        padding: 0,
+        textDecoration: "underline",
     },
 };
 
