@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 
 import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
+import productRoutes from './routes/productRoutes.js'
 import errorHandler from './middlewares/error.js';
 
 dotenv.config();
@@ -16,6 +17,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
+app.use('/api/products', productRoutes);
 
 //error middleware shoule be palced after routers
 app.use(errorHandler);
