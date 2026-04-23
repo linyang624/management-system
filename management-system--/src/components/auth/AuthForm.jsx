@@ -9,6 +9,7 @@ import {
 } from '../../features/auth/authSlice';
 import { validateAuthForm } from '../../utils/validators';
 import { FiX } from "react-icons/fi";
+import { RiMailSendLine } from "react-icons/ri";
 
 function AuthForm({ mode }) {
     const dispatch = useDispatch();
@@ -124,9 +125,21 @@ function AuthForm({ mode }) {
     if (mode === 'updatePassword' && isSubmitted) {
         return (
             <div style={styles.page}>
-                <div style={styles.card}>
-                    <h1>Update Password Success Page</h1>
-                    <p>We have sent the update password link to your email, please check that!</p>
+                <div style={styles.successCard}>
+                    <button
+                        type="button"
+                        style={styles.closeButton}
+                        onClick={() => navigate("/signin")}
+                    >
+                        <FiX />
+                    </button>
+
+
+                    <div style={styles.successIcon}>
+                        <RiMailSendLine />
+                    </div>
+
+                    <p style={styles.successText}>We have sent the update password link to your email, please check that!</p>
                 </div>
             </div>
         );
@@ -220,7 +233,7 @@ function AuthForm({ mode }) {
                 {mode === 'signup' && (
                     <div style={styles.signupFooter}>
                         <label style={styles.label}>Already have an account? </label>
-                        <Link to="/signin" style={styles.link}>Sign in</Link> 
+                        <Link to="/signin" style={styles.link}>Sign in</Link>
                     </div>
                 )}
             </div>
@@ -305,11 +318,18 @@ const styles = {
     },
     successCard: {
         width: "100%",
-        maxWidth: "420px",
-        backgroundColor: "#fff",
-        padding: "32px 24px",
+        maxWidth: "500px",
+        minHeight: "420px",
+        backgroundColor: "#ffffff",
         borderRadius: "12px",
         boxSizing: "border-box",
+        boxShadow: "0 2px 10px rgba(0, 0, 0, 0.06)",
+        position: "relative",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: "40px 36px",
         textAlign: "center",
     },
     label: {
@@ -413,13 +433,47 @@ const styles = {
         fontFamily: "Arial, sans-serif",
         fontWeight: "500",
     },
-
     successMessage: {
         marginTop: "16px",
         fontSize: "14px",
         color: "#16a34a",
         fontFamily: "Arial, sans-serif",
         fontWeight: "500",
+    },
+    successCloseButton: {
+        position: "absolute",
+        top: "20px",
+        right: "20px",
+        background: "none",
+        border: "none",
+        padding: 0,
+        margin: 0,
+        fontSize: "32px",
+        color: "#333333",
+        cursor: "pointer",
+        lineHeight: 1,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    successIcon: {
+        fontSize: "56px",
+        color: "#4f46e5",
+        marginBottom: "28px",
+        lineHeight: 1,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    successText: {
+        margin: 0,
+        maxWidth: "360px",
+        fontSize: "16px",
+        lineHeight: "1.5",
+        color: "#111827",
+        fontWeight: "600",
+        fontFamily: "Arial, sans-serif",
+        textAlign: "center",
     },
 };
 
