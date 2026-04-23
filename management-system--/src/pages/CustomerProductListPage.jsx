@@ -1,18 +1,18 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import products from "../mock/products";
 import {
   addToCart,
   increaseQuantity,
   decreaseQuantity,
 } from "../features/cart/cartSlice";
+import { getProductsApi } from "../api/productApi";
 import SearchBar from "./SearchBar";
 import ProductGrid from "./ProductGrid";
 import Pagination from "./Pagination";
 
 // Number of products shown on each page
-const PRODUCTS_PER_PAGE = 10;
+const PRODUCTS_PER_PAGE = 8;
 
 // Customer product list page
 // Requirements:
@@ -40,6 +40,11 @@ export default function CustomerProductListPage() {
       }
   );
 
+  // Product data from backend
+  const [products, setProducts] = useState([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+  const [productError, setProductError] = useState("");
+
   // Search input state
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -50,12 +55,40 @@ export default function CustomerProductListPage() {
   const [currentPage, setCurrentPage] = useState(1);
 
   /*
-    Filter and sort products.
+    Load products from backend whenever sort changes.
   */
-  const filteredAndSortedProducts = useMemo(() => {
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        setLoadingProducts(true);
+        setProductError("");
+
+        let sortParam = "latest";
+
+        if (sortOrder === "priceAsc") {
+          sortParam = "price_asc";
+        } else if (sortOrder === "priceDesc") {
+          sortParam = "price_desc";
+        }
+
+        const data = await getProductsApi(sortParam);
+        setProducts(data);
+      } catch (error) {
+        setProductError(error.message || "Failed to load products");
+      } finally {
+        setLoadingProducts(false);
+      }
+    };
+
+    loadProducts();
+  }, [sortOrder]);
+
+  /*
+    Filter products by search text.
+  */
+  const filteredProducts = useMemo(() => {
     let result = [...products];
 
-    // Search
     if (searchTerm.trim()) {
       const keyword = searchTerm.toLowerCase();
 
@@ -70,20 +103,11 @@ export default function CustomerProductListPage() {
       });
     }
 
-    // Sort
-    if (sortOrder === "priceAsc") {
-      result.sort((a, b) => a.price - b.price);
-    } else if (sortOrder === "priceDesc") {
-      result.sort((a, b) => b.price - a.price);
-    }
-
     return result;
-  }, [searchTerm, sortOrder]);
+  }, [products, searchTerm]);
 
   // Total page count
-  const totalPages = Math.ceil(
-    filteredAndSortedProducts.length / PRODUCTS_PER_PAGE
-  );
+  const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
 
   /*
     Paginated products for current page
@@ -92,8 +116,8 @@ export default function CustomerProductListPage() {
     const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
     const endIndex = startIndex + PRODUCTS_PER_PAGE;
 
-    return filteredAndSortedProducts.slice(startIndex, endIndex);
-  }, [filteredAndSortedProducts, currentPage]);
+    return filteredProducts.slice(startIndex, endIndex);
+  }, [filteredProducts, currentPage]);
 
   // Search input handler
   const handleSearchChange = (e) => {
@@ -166,45 +190,53 @@ export default function CustomerProductListPage() {
         </select>
       </div>
 
-      <ProductGrid
-        products={paginatedProducts}
-        getDetailPath={(product) => `/products/${product.id}`}
-        renderActions={(product) => {
-          const cartItem = userCart.items.find(
-            (item) => item.id === product.id
-          );
+      {loadingProducts ? (
+        <p>Loading products...</p>
+      ) : productError ? (
+        <p style={{ color: "red" }}>{productError}</p>
+      ) : (
+        <>
+          <ProductGrid
+            products={paginatedProducts}
+            getDetailPath={(product) => `/products/${product.id}`}
+            renderActions={(product) => {
+              const cartItem = userCart.items.find(
+                (item) => item.id === product.id
+              );
 
-          return !cartItem ? (
-            <button onClick={() => handleAddToCart(product)}>
-              Add to Cart
-            </button>
-          ) : (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "10px",
-              }}
-            >
-              <button onClick={() => handleDecreaseQuantity(product.id)}>
-                -
-              </button>
+              return !cartItem ? (
+                <button onClick={() => handleAddToCart(product)}>
+                  Add to Cart
+                </button>
+              ) : (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                  }}
+                >
+                  <button onClick={() => handleDecreaseQuantity(product.id)}>
+                    -
+                  </button>
 
-              <span>{cartItem.quantity}</span>
+                  <span>{cartItem.quantity}</span>
 
-              <button onClick={() => handleIncreaseQuantity(product.id)}>
-                +
-              </button>
-            </div>
-          );
-        }}
-      />
+                  <button onClick={() => handleIncreaseQuantity(product.id)}>
+                    +
+                  </button>
+                </div>
+              );
+            }}
+          />
 
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={setCurrentPage}
-      />
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        </>
+      )}
     </div>
   );
 }

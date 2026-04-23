@@ -1,11 +1,12 @@
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import products from "../mock/products";
 import {
   addToCart,
   increaseQuantity,
   decreaseQuantity,
 } from "../features/cart/cartSlice";
+import { getProductByIdApi } from "../api/productApi";
 
 // Shared product detail page for both customer and admin
 export default function ProductDetailPage() {
@@ -30,15 +31,34 @@ export default function ProductDetailPage() {
       }
   );
 
-  // Find product by id
-  const product = products.find((item) => item.id === Number(id));
+  // Product data from backend
+  const [product, setProduct] = useState(null);
+  const [loadingProduct, setLoadingProduct] = useState(true);
+  const [productError, setProductError] = useState("");
 
-  if (!product) {
-    return <h2 style={{ padding: "20px" }}>Product not found.</h2>;
-  }
+  // Load single product from backend
+  useEffect(() => {
+    const loadProduct = async () => {
+      try {
+        setLoadingProduct(true);
+        setProductError("");
+
+        const data = await getProductByIdApi(id);
+        setProduct(data);
+      } catch (error) {
+        setProductError(error.message || "Failed to load product");
+      } finally {
+        setLoadingProduct(false);
+      }
+    };
+
+    loadProduct();
+  }, [id]);
 
   // Check whether this product is already in cart
-  const cartItem = userCart.items.find((item) => item.id === product.id);
+  const cartItem = product
+    ? userCart.items.find((item) => item.id === product.id)
+    : null;
 
   // Add to cart
   const handleAddToCart = () => {
@@ -78,6 +98,22 @@ export default function ProductDetailPage() {
     navigate(`/admin/products/edit/${product.id}`);
   };
 
+  if (loadingProduct) {
+    return <p style={{ padding: "20px" }}>Loading product...</p>;
+  }
+
+  if (productError) {
+    return (
+      <div style={{ padding: "20px" }}>
+        <p style={{ color: "red" }}>{productError}</p>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return <h2 style={{ padding: "20px" }}>Product not found.</h2>;
+  }
+
   return (
     <div style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
       {product.image && (
@@ -98,6 +134,12 @@ export default function ProductDetailPage() {
       <h2>{product.name}</h2>
       <p>
         <strong>Price:</strong> ${product.price}
+      </p>
+      <p>
+        <strong>Category:</strong> {product.category}
+      </p>
+      <p>
+        <strong>Stock:</strong> {product.stock}
       </p>
       <p>{product.description}</p>
 
