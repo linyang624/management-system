@@ -204,8 +204,8 @@ function AuthForm({ mode }) {
                     </button>
                 </form>
 
-                {mode !== "signin" && error && <p>{error}</p>}
-                {successMessage && mode !== 'updatePassword' && <p>{successMessage}</p>}
+                {mode !== "signin" && error && <p style={styles.errorMessage}>{error}</p>}
+                {successMessage && mode !== 'updatePassword' && <p style={styles.successMessage}>{successMessage}</p>}
 
                 {mode === 'signin' && (
                     <div style={isMobile ? styles.authLinksColumn : styles.authLinksRow}>
@@ -218,10 +218,9 @@ function AuthForm({ mode }) {
                 )}
 
                 {mode === 'signup' && (
-                    <div>
-                        <p>
-                            Already have an account? <Link to="/signin">Sign in</Link>
-                        </p>
+                    <div style={styles.signupFooter}>
+                        <label style={styles.label}>Already have an account? </label>
+                        <Link to="/signin" style={styles.link}>Sign in</Link> 
                     </div>
                 )}
             </div>
@@ -406,6 +405,21 @@ const styles = {
         lineHeight: "1.5",
         color: "#d92d20",
         textAlign: "left",
+    },
+    errorMessage: {
+        marginTop: "16px",
+        fontSize: "14px",
+        color: "#d92d20",
+        fontFamily: "Arial, sans-serif",
+        fontWeight: "500",
+    },
+
+    successMessage: {
+        marginTop: "16px",
+        fontSize: "14px",
+        color: "#16a34a",
+        fontFamily: "Arial, sans-serif",
+        fontWeight: "500",
     },
 };
 
