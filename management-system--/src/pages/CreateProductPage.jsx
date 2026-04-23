@@ -23,6 +23,7 @@ export default function CreateProductPage() {
 
   // Store preview image URL for display
   const [previewImage, setPreviewImage] = useState("");
+  const [previewFailed, setPreviewFailed] = useState(false);
 
   /*
     Handle text, textarea, and select input changes.
@@ -39,6 +40,7 @@ export default function CreateProductPage() {
     // If admin types an image link manually, use it as preview
     if (name === "imageLink") {
       setPreviewImage(value);
+      setPreviewFailed(false);
     }
   };
 
@@ -59,6 +61,7 @@ export default function CreateProductPage() {
     }));
 
     setPreviewImage(URL.createObjectURL(file));
+    setPreviewFailed(false);
   };
 
   /*
@@ -96,6 +99,7 @@ export default function CreateProductPage() {
     });
 
     setPreviewImage("");
+    setPreviewFailed(false);
   };
 
   return (
@@ -244,15 +248,22 @@ export default function CreateProductPage() {
           }}
         >
           {previewImage ? (
-            <img
-              src={previewImage}
-              alt="Preview"
-              style={{
-                width: "100%",
-                maxHeight: "220px",
-                objectFit: "contain",
-              }}
-            />
+            previewFailed ? (
+              <span style={{ color: "red", fontWeight: "500" }}>
+                Preview failed
+              </span>
+            ) : (
+              <img
+                src={previewImage}
+                alt="Preview"
+                onError={() => setPreviewFailed(true)}
+                style={{
+                  width: "100%",
+                  maxHeight: "220px",
+                  objectFit: "contain",
+                }}
+              />
+            )
           ) : (
             <span style={{ color: "#888" }}>image preview!</span>
           )}
