@@ -9,6 +9,7 @@ import {
 } from "../features/cart/cartSlice";
 import { calculateCartTotals } from "../utils/cartUtils";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 // Full checkout page (final review)
 export default function CheckoutPage() {
@@ -23,6 +24,7 @@ export default function CheckoutPage() {
       dispatch(clearPromoFeedback(username));
     };
   }, [dispatch, username]);
+
 
   // Get cart data
   const userCart =
@@ -50,6 +52,12 @@ export default function CheckoutPage() {
     setPromoInput("");
   };
 
+  const navigate = useNavigate();
+
+  const handleGoToProduct = (productId) => {
+    navigate(`/products/${productId}`);
+  };
+
   return (
     <div style={{ padding: "20px" }}>
       <h2>Checkout Page</h2>
@@ -65,36 +73,68 @@ export default function CheckoutPage() {
                 border: "1px solid #ccc",
                 padding: "12px",
                 marginBottom: "12px",
+                display: "flex",
+                gap: "16px",
+                alignItems: "flex-start",
               }}
             >
-              <h4>{item.name}</h4>
-              <p>Price: ${item.price}</p>
-              <p>Quantity: {item.quantity}</p>
+              <img
+                src={item.image}
+                alt={item.name}
+                onClick={() => handleGoToProduct(item.id)}
+                style={{
+                  width: "96px",
+                  height: "96px",
+                  objectFit: "cover",
+                  borderRadius: "8px",
+                  border: "1px solid #ddd",
+                  flexShrink: 0,
+                  cursor: "pointer",
+                }}
+              />
 
-              <button
-                onClick={() =>
-                  dispatch(decreaseQuantity({ username, productId: item.id }))
-                }
-              >
-                -
-              </button>
-              <button
-                onClick={() =>
-                  dispatch(increaseQuantity({ username, productId: item.id }))
-                }
-              >
-                +
-              </button>
-              <button
-                onClick={() =>
-                  dispatch(removeFromCart({ username, productId: item.id }))
-                }
-              >
-                Remove
-              </button>
+              <div style={{ flex: 1 }}>
+                <h4
+                  onClick={() => handleGoToProduct(item.id)}
+                  style={{
+                    margin: "0 0 8px 0",
+                    cursor: "pointer",
+                    textDecoration: "underline",
+                  }}
+                >
+                  {item.name}
+                </h4>
+                <p style={{ margin: "0 0 8px 0" }}>
+                  Price: ${Number(item.price).toFixed(2)}
+                </p>
+                <p style={{ margin: "0 0 12px 0" }}>Quantity: {item.quantity}</p>
+
+                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                  <button
+                    onClick={() =>
+                      dispatch(decreaseQuantity({ username, productId: item.id }))
+                    }
+                  >
+                    -
+                  </button>
+                  <button
+                    onClick={() =>
+                      dispatch(increaseQuantity({ username, productId: item.id }))
+                    }
+                  >
+                    +
+                  </button>
+                  <button
+                    onClick={() =>
+                      dispatch(removeFromCart({ username, productId: item.id }))
+                    }
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
             </div>
           ))}
-
           <div style={{ marginTop: "20px" }}>
             <input
               type="text"
@@ -117,7 +157,7 @@ export default function CheckoutPage() {
           <p>Items: {itemCount}</p>
           <p>Subtotal: ${subtotal.toFixed(2)}</p>
           <p>Discount: -${discount.toFixed(2)}</p>
-          <p>Shipping: ${shipping.toFixed(2)}</p>
+          {/* <p>Shipping: ${shipping.toFixed(2)}</p> */}
           <p>Tax: ${tax.toFixed(2)}</p>
           <h3>Total: ${total.toFixed(2)}</h3>
 

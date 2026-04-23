@@ -11,7 +11,7 @@ export function calculateCartTotals(userCart) {
 
   const discount = subtotal * discountRate;
   // Free shipping over $50
-  const shipping = subtotal > 50 ? 10 : 0;
+  const shipping = 0;
   // Simple 8% tax
   const tax = subtotal * 0.08;
   const total = subtotal - discount + shipping + tax;
