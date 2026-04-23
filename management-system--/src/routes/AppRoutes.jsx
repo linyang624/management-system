@@ -138,6 +138,15 @@ function AppRoutes() {
             }
           />
 
+          <Route
+            path="/admin/products/edit/:id"
+            element={
+              <AdminRoute>
+                <CreateProductPage />
+              </AdminRoute>
+            }
+          />
+
           {/* Fallback route */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
