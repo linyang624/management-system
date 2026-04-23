@@ -4,10 +4,6 @@ import Product from '../models/Product.js';
 export const createProduct = async (req, res, next) => {
     try {
         const { name, description, category, price, stock, image} = req.body;
-        
-        if (!name || !description || !category || price === undefined || stock === undefined) {
-            return res.status(400).json({ message: "Missing Required Fields" });
-        }
 
         const product = await Product.create({
             name,
@@ -74,10 +70,6 @@ export const getProductById = async (req, res, next) => {
 export const updateProduct = async (req, res, next) => {
     try {
         const { name, description, category, price, stock, image} = req.body;
-        
-        if (!name || !description || !category || price === undefined || stock === undefined) {
-            return res.status(400).json({ message: "Missing required fields" });
-        }
 
         const updatedProduct = await Product.findByIdAndUpdate(
             req.params.id,
