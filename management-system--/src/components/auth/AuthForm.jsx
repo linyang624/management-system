@@ -27,6 +27,19 @@ function AuthForm({ mode }) {
     //show password
     const [showPassword, setShowPassword] = useState(false);
 
+    //mobile responsive
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+
+        window.addEventListener("resize", handleResize);
+
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
     useEffect(() => {
         dispatch(clearAuthMessage());
         setIsSubmitted(false);
@@ -162,7 +175,7 @@ function AuthForm({ mode }) {
                                 />
                                 <button type="button" onClick={() => setShowPassword((prev) => !prev)}
                                     style={styles.showButton}>
-                                    {showPassword ? "Hide" : " Show"}
+                                    {showPassword ? "Hide" : "Show"}
                                 </button>
                             </div>
                             {formErrors.password && <p>{formErrors.password}</p>}
@@ -178,16 +191,12 @@ function AuthForm({ mode }) {
                 {successMessage && mode !== 'updatePassword' && <p>{successMessage}</p>}
 
                 {mode === 'signin' && (
-                    <div style={styles.authLinksRow}>
+                    <div style={isMobile ? styles.authLinksColumn : styles.authLinksRow}>
                         <div style={styles.inlineTextRow}>
-
                             <label style={styles.label}>Don&apos;t have an account?</label>
                             <Link to="/signup" style={styles.link}>Sign up</Link>
                         </div>
-
                         <Link to="/update-password" style={styles.link}>Forgot password?</Link>
-
-
                     </div>
                 )}
 
@@ -321,10 +330,20 @@ const styles = {
         flexWrap: "wrap",
 
     },
+    authLinksColumn: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: "16px",
+        marginTop: "20px",
+
+    },
     inlineTextRow: {
         display: "flex",
         alignItems: "center",
         gap: "4px",
+        flexWrap: "wrap",
+        justifyContent: "center",
     },
     passwordWrapper: {
         position: "relative",
