@@ -5,8 +5,12 @@ import {
   increaseQuantity,
   decreaseQuantity,
   removeFromCart,
+  applyPromoCode,
+  clearPromoFeedback,
 } from "../../features/cart/cartSlice";
 import { calculateCartTotals } from "../../utils/cartUtils";
+import { useState, useEffect } from "react";
+
 
 export default function CartDrawer() {
   const dispatch = useDispatch();
@@ -17,6 +21,14 @@ export default function CartDrawer() {
   const isDrawerOpen = useSelector((state) => state.cart.isDrawerOpen);
 
   const username = user?.email || "guest";
+
+  const [promoInput, setPromoInput] = useState("");
+  useEffect(() => {
+    return () => {
+      dispatch(clearPromoFeedback(username));
+    };
+  }, [dispatch, username]);
+
 
   const userCart =
     useSelector((state) => state.cart.cartsByUser[username]) || {
@@ -38,6 +50,10 @@ export default function CartDrawer() {
   const handleCheckout = () => {
     dispatch(closeCartDrawer());
     navigate("/checkout");
+  };
+
+  const handleApplyPromo = () => {
+    dispatch(applyPromoCode({ username, code: promoInput }));
   };
 
   const handleGoToProduct = (productId) => {
@@ -154,6 +170,31 @@ export default function CartDrawer() {
             </div>
 
             {/* Fixed summary + checkout button */}
+            <div style={promoSectionStyle}>
+            <label style={promoLabelStyle}>Apply Discount Code</label>
+
+            <div style={promoRowStyle}>
+              <input
+                type="text"
+                placeholder="20 DOLLAR OFF"
+                value={promoInput}
+                onChange={(e) => setPromoInput(e.target.value)}
+                style={promoInputStyle}
+              />
+
+              <button onClick={handleApplyPromo} style={promoButtonStyle}>
+                Apply
+              </button>
+            </div>
+
+            {userCart.promoMessage && (
+              <p style={promoSuccessStyle}>{userCart.promoMessage}</p>
+            )}
+
+            {userCart.promoError && (
+              <p style={promoErrorStyle}>{userCart.promoError}</p>
+            )}
+          </div>
             <div style={footerSummaryStyle}>
               <div style={summaryRowStyle}>
                 <span>Subtotal</span>
@@ -210,7 +251,7 @@ const drawerStyle = {
 };
 
 const headerStyle = {
-  backgroundColor: "#6366f1",
+  backgroundColor: "#4f46e5",
   color: "#fff",
   padding: "20px 24px",
   display: "flex",
@@ -246,7 +287,7 @@ const itemsScrollStyle = {
 };
 
 const footerSummaryStyle = {
-  padding: "16px 20px 20px",
+  padding: "20px 32px 24px",
   borderTop: "1px solid #e5e7eb",
   backgroundColor: "#fff",
 };
@@ -346,11 +387,67 @@ const checkoutButtonStyle = {
   marginTop: "18px",
   width: "100%",
   padding: "14px 16px",
-  backgroundColor: "#6366f1",
+  backgroundColor: "#4f46e5",
   color: "#fff",
   border: "none",
   borderRadius: "6px",
   cursor: "pointer",
   fontSize: "15px",
   fontWeight: "bold",
+};
+
+const promoSectionStyle = {
+  marginBottom: "18px",
+  padding: "0 24px",
+  width: "100%",
+  boxSizing: "border-box",
+};
+
+const promoLabelStyle = {
+  display: "block",
+  marginBottom: "8px",
+  fontSize: "14px",
+  fontWeight: "600",
+  color: "#6b7280",
+};
+
+const promoRowStyle = {
+  display: "grid",
+  gridTemplateColumns: "1fr auto",
+  gap: "12px",
+  width: "100%",
+  boxSizing: "border-box",
+};
+
+const promoInputStyle = {
+  width: "100%",
+  minWidth: 0,
+  padding: "12px",
+  border: "1px solid #d1d5db",
+  borderRadius: "6px",
+  fontSize: "14px",
+  boxSizing: "border-box",
+};
+
+const promoButtonStyle = {
+  padding: "12px 18px",
+  backgroundColor: "#4f46e5",
+  color: "#fff",
+  border: "none",
+  borderRadius: "6px",
+  cursor: "pointer",
+  fontWeight: "600",
+  whiteSpace: "nowrap",
+};
+
+const promoSuccessStyle = {
+  margin: "8px 0 0 0",
+  color: "green",
+  fontSize: "13px",
+};
+
+const promoErrorStyle = {
+  margin: "8px 0 0 0",
+  color: "red",
+  fontSize: "13px",
 };
