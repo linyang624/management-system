@@ -323,7 +323,7 @@ const primaryButtonStyle = {
   marginTop: "20px",
   width: "100%",
   padding: "12px",
-  backgroundColor: "#6366f1",
+  backgroundColor: "#4f46e5",
   color: "#fff",
   border: "none",
   borderRadius: "6px",
