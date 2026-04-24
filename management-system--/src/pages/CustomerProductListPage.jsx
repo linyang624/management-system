@@ -242,17 +242,22 @@ export default function CustomerProductListPage() {
               const cartItem = userCart.items.find(
                 (item) => item.id === product.id
               );
+
+              const stock = Number(product.stock) || 0;
+              const isOutOfStock = stock <= 0;
               const reachedStockLimit =
-              cartItem && cartItem.quantity >= Number(product.stock);
+                cartItem && cartItem.quantity >= stock;
 
               return (
                 <div style={cardActionRowStyle}>
                   {!cartItem ? (
                     <button
                       onClick={() => handleAddToCart(product)}
-                      style={primaryButtonStyle}
+                      disabled={isOutOfStock}
+                      style={isOutOfStock ? disabledAddButtonStyle : primaryButtonStyle}
+                      title={isOutOfStock ? "Out of stock" : ""}
                     >
-                      Add
+                      {isOutOfStock ? "Out of Stock" : "Add"}
                     </button>
                   ) : (
                     <div style={qtyContainerStyle}>
@@ -272,6 +277,11 @@ export default function CustomerProductListPage() {
                           reachedStockLimit
                             ? disabledQtyButtonStyle
                             : qtyButtonStyle
+                        }
+                        title={
+                          reachedStockLimit
+                            ? "You have reached the stock limit"
+                            : ""
                         }
                       >
                         +
@@ -415,6 +425,14 @@ const qtyTextStyle = {
   width: "40px",
   textAlign: "center",
   fontWeight: "600",
+};
+
+const disabledAddButtonStyle = {
+  ...primaryButtonStyle,
+  backgroundColor: "#e5e7eb",
+  border: "1px solid #d1d5db",
+  color: "#9ca3af",
+  cursor: "not-allowed",
 };
 
 const disabledQtyButtonStyle = {

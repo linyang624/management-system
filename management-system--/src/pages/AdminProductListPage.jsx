@@ -264,14 +264,25 @@ export default function AdminProductListPage() {
                 (item) => item.id === product.id
               );
 
+              const stock = Number(product.stock) || 0;
+              const isOutOfStock = stock <= 0;
+              const reachedStockLimit =
+                cartItem && cartItem.quantity >= stock;
+
               return (
                 <div style={cardActionRowStyle}>
                   {!cartItem ? (
                     <button
                       onClick={() => handleAddToCart(product)}
-                      style={cardPrimaryButtonStyle}
+                      disabled={isOutOfStock}
+                      style={
+                        isOutOfStock
+                          ? disabledCardPrimaryButtonStyle
+                          : cardPrimaryButtonStyle
+                      }
+                      title={isOutOfStock ? "Out of stock" : ""}
                     >
-                      Add 
+                      {isOutOfStock ? "Out of Stock" : "Add"}
                     </button>
                   ) : (
                     <div style={qtyContainerStyle}>
@@ -286,7 +297,17 @@ export default function AdminProductListPage() {
 
                       <button
                         onClick={() => handleIncreaseQuantity(product.id)}
-                        style={qtyButtonStyle}
+                        disabled={reachedStockLimit}
+                        style={
+                          reachedStockLimit
+                            ? disabledQtyButtonStyle
+                            : qtyButtonStyle
+                        }
+                        title={
+                          reachedStockLimit
+                            ? "You have reached the stock limit"
+                            : ""
+                        }
                       >
                         +
                       </button>
@@ -406,6 +427,7 @@ const primaryButtonStyle = {
   boxSizing: "border-box",
 };
 
+
 // const secondaryButtonStyle = {
 //   padding: "7px 20px",
 //   backgroundColor: "#fff",
@@ -457,6 +479,14 @@ const cardPrimaryButtonStyle = {
   boxSizing: "border-box",
 };
 
+const disabledCardPrimaryButtonStyle = {
+  ...cardPrimaryButtonStyle,
+  backgroundColor: "#e5e7eb",
+  border: "1px solid #d1d5db",
+  color: "#9ca3af",
+  cursor: "not-allowed",
+};
+
 const cardSecondaryButtonStyle = {
   flex: 1,
   height: "34px",
@@ -472,40 +502,39 @@ const cardSecondaryButtonStyle = {
   boxSizing: "border-box",
 };
 
-const qtyButtonStyle = {
-  flex: 1,
+
+
+const qtyContainerStyle = {
+  display: "flex",
+  alignItems: "center",
+  border: "1px solid #d1d5db",
+  borderRadius: "6px",
+  overflow: "hidden",
   height: "34px",
-  border: "1px solid #4f46e5",
-  backgroundColor: "#4f46e5",
-  color: "#fff",
+};
+
+const qtyButtonStyle = {
+  width: "32px",
+  height: "100%",
+  border: "none",
+  backgroundColor: "#f3f4f6",
   cursor: "pointer",
-  fontSize: "13px",
-  fontWeight: "500",
-  fontFamily: "Arial, sans-serif",
-  boxSizing: "border-box",
+};
+
+const disabledQtyButtonStyle = {
+  ...qtyButtonStyle,
+  backgroundColor: "#e5e7eb",
+  border: "1px solid #d1d5db",
+  color: "#9ca3af",
+  cursor: "not-allowed",
 };
 
 const qtyTextStyle = {
-  flex: 1,
-  height: "34px",
-  lineHeight: "34px",
+  width: "40px",
   textAlign: "center",
-  backgroundColor: "#4f46e5",
-  color: "#fff",
-  fontSize: "12px",
-  fontWeight: "500",
-  fontFamily: "Arial, sans-serif",
+  fontWeight: "600",
 };
 
-const qtyContainerStyle = {
-  flex: 1,
-  display: "flex",
-  alignItems: "center",
-  height: "34px",
-  backgroundColor: "#4f46e5",
-  borderRadius: "4px",
-  overflow: "hidden",
-};
 
 const sortDropdownStyle = {
   position: "relative",

@@ -82,10 +82,13 @@ export default function ProductDetailPage() {
     ? userCart.items.find((item) => item.id === product.id)
     : null;
 
+  const stock = product ? Number(product.stock) || 0 : 0;
+  const reachedStockLimit = cartItem && cartItem.quantity >= stock;
+
   // Add to cart
   const handleAddToCart = () => {
-    if (Number(product.stock) <= 0) {        
-        return;
+    if (Number(product.stock) <= 0) {
+      return;
     }
 
     if (!isAuthenticated) {
@@ -142,12 +145,19 @@ export default function ProductDetailPage() {
 
   return (
     <div className="product-detail-card" style={pageContainerStyle}>
-      <h2 className="product-detail-title" style={pageTitleStyle}>Products Detail</h2>
+      <h2 className="product-detail-title" style={pageTitleStyle}>
+        Products Detail
+      </h2>
 
       <div className="product-detail-card" style={detailCardStyle}>
         <div className="product-detail-image-section" style={imageSectionStyle}>
           {product.image && (
-            <img className="product-detail-image" src={product.image} alt={product.name} style={imageStyle} />
+            <img
+              className="product-detail-image"
+              src={product.image}
+              alt={product.name}
+              style={imageStyle}
+            />
           )}
         </div>
 
@@ -157,9 +167,7 @@ export default function ProductDetailPage() {
           <h1 style={productNameStyle}>{product.name}</h1>
 
           <div style={priceRowStyle}>
-            <span style={priceStyle}>
-              ${Number(product.price).toFixed(2)}
-            </span>
+            <span style={priceStyle}>${Number(product.price).toFixed(2)}</span>
 
             {Number(product.stock) <= 0 && (
               <span style={stockBadgeStyle}>Out of Stock</span>
@@ -172,14 +180,16 @@ export default function ProductDetailPage() {
 
           <div className="product-detail-actions" style={actionRowStyle}>
             {!cartItem ? (
-              <button 
-                onClick={handleAddToCart} 
+              <button
+                onClick={handleAddToCart}
                 disabled={Number(product.stock) <= 0}
                 style={{
-                    ...primaryButtonStyle,
-                    ...(Number(product.stock) <= 0 ? disabledPrimaryButtonStyle : {}),
+                  ...primaryButtonStyle,
+                  ...(Number(product.stock) <= 0
+                    ? disabledPrimaryButtonStyle
+                    : {}),
                 }}
-                >
+              >
                 Add to Cart
               </button>
             ) : (
@@ -190,7 +200,18 @@ export default function ProductDetailPage() {
 
                 <span style={qtyTextStyle}>{cartItem.quantity}</span>
 
-                <button onClick={handleIncreaseQuantity} style={qtyButtonStyle}>
+                <button
+                  onClick={handleIncreaseQuantity}
+                  disabled={reachedStockLimit}
+                  style={
+                    reachedStockLimit
+                      ? disabledQtyButtonStyle
+                      : qtyButtonStyle
+                  }
+                  title={
+                    reachedStockLimit ? "You have reached the stock limit" : ""
+                  }
+                >
                   +
                 </button>
               </div>
@@ -348,39 +369,36 @@ const secondaryButtonStyle = {
 };
 
 const qtyContainerStyle = {
-  width: "120px",
   display: "flex",
   alignItems: "center",
-  height: "40px",
-  backgroundColor: "#4f46e5",
-  borderRadius: "4px",
+  border: "1px solid #d1d5db",
+  borderRadius: "6px",
   overflow: "hidden",
+  height: "34px",
 };
 
 const qtyButtonStyle = {
-  flex: 1,
-  height: "40px",
-  border: "1px solid #4f46e5",
-  backgroundColor: "#4f46e5",
-  color: "#fff",
+  width: "32px",
+  height: "100%",
+  border: "none",
+  backgroundColor: "#f3f4f6",
   cursor: "pointer",
-  fontSize: "14px",
-  fontWeight: "500",
-  fontFamily: "Arial, sans-serif",
-  boxSizing: "border-box",
+};
+
+const disabledQtyButtonStyle = {
+  ...qtyButtonStyle,
+  backgroundColor: "#e5e7eb",
+  border: "1px solid #d1d5db",
+  color: "#9ca3af",
+  cursor: "not-allowed",
 };
 
 const qtyTextStyle = {
-  flex: 1,
-  height: "40px",
-  lineHeight: "40px",
+  width: "40px",
   textAlign: "center",
-  backgroundColor: "#4f46e5",
-  color: "#fff",
-  fontSize: "13px",
-  fontWeight: "500",
-  fontFamily: "Arial, sans-serif",
+  fontWeight: "600",
 };
+
 
 const disabledPrimaryButtonStyle = {
   backgroundColor: "#9ca3af",

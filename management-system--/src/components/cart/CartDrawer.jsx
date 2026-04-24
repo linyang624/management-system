@@ -97,88 +97,113 @@ export default function CartDrawer() {
                 <p>Your cart is empty.</p>
               </div>
             ) : (
-              userCart.items.map((item) => (
-                <div key={item.id} className="cart-item-card" style={itemCardStyle}>
-                  <img
-                    className="cart-item-image"
-                    src={item.image}
-                    alt={item.name}
-                    style={{ ...imageStyle, cursor: "pointer" }}
-                    onClick={() => handleGoToProduct(item.id)}
-                    onError={(e) => {
-                      e.currentTarget.style.display = "none";
-                    }}
-                  />
+              userCart.items.map((item) => {
+                const stock = Number(item.stock) || 0;
+                const reachedStockLimit = item.quantity >= stock;
 
-                  <div className="cart-item-info" style={itemInfoStyle}>
-                    <div className="cart-item-top-row" style={itemTopRowStyle}>
-                      <h4
-                        className="cart-item-name"
-                        style={{
-                          ...itemNameStyle,
-                          cursor: "pointer",
-                          textDecoration: "none",
-                        }}
-                        onClick={() => handleGoToProduct(item.id)}
+                return (
+                  <div
+                    key={item.id}
+                    className="cart-item-card"
+                    style={itemCardStyle}
+                  >
+                    <img
+                      className="cart-item-image"
+                      src={item.image}
+                      alt={item.name}
+                      style={{ ...imageStyle, cursor: "pointer" }}
+                      onClick={() => handleGoToProduct(item.id)}
+                      onError={(e) => {
+                        e.currentTarget.style.display = "none";
+                      }}
+                    />
+
+                    <div className="cart-item-info" style={itemInfoStyle}>
+                      <div
+                        className="cart-item-top-row"
+                        style={itemTopRowStyle}
                       >
-                        {item.name}
-                      </h4>
-
-                      <p className="cart-item-price" style={itemPriceStyle}>
-                        ${Number(item.price).toFixed(2)}
-                      </p>
-                    </div>
-
-                    <div className="cart-item-bottom-row" style={itemBottomRowStyle}>
-                      <div style={qtyBoxStyle}>
-                        <button
-                          onClick={() =>
-                            dispatch(
-                              decreaseQuantity({
-                                username,
-                                productId: item.id,
-                              })
-                            )
-                          }
-                          style={qtyButtonStyle}
+                        <h4
+                          className="cart-item-name"
+                          style={{
+                            ...itemNameStyle,
+                            cursor: "pointer",
+                            textDecoration: "none",
+                          }}
+                          onClick={() => handleGoToProduct(item.id)}
                         >
-                          -
-                        </button>
+                          {item.name}
+                        </h4>
 
-                        <span style={qtyTextStyle}>{item.quantity}</span>
-
-                        <button
-                          onClick={() =>
-                            dispatch(
-                              increaseQuantity({
-                                username,
-                                productId: item.id,
-                              })
-                            )
-                          }
-                          style={qtyButtonStyle}
-                        >
-                          +
-                        </button>
+                        <p className="cart-item-price" style={itemPriceStyle}>
+                          ${Number(item.price).toFixed(2)}
+                        </p>
                       </div>
 
-                      <button
-                        onClick={() =>
-                          dispatch(
-                            removeFromCart({
-                              username,
-                              productId: item.id,
-                            })
-                          )
-                        }
-                        style={removeButtonStyle}
+                      <div
+                        className="cart-item-bottom-row"
+                        style={itemBottomRowStyle}
                       >
-                        Remove
-                      </button>
+                        <div style={qtyBoxStyle}>
+                          <button
+                            onClick={() =>
+                              dispatch(
+                                decreaseQuantity({
+                                  username,
+                                  productId: item.id,
+                                })
+                              )
+                            }
+                            style={qtyButtonStyle}
+                          >
+                            -
+                          </button>
+
+                          <span style={qtyTextStyle}>{item.quantity}</span>
+
+                          <button
+                            onClick={() =>
+                              dispatch(
+                                increaseQuantity({
+                                  username,
+                                  productId: item.id,
+                                })
+                              )
+                            }
+                            disabled={reachedStockLimit}
+                            style={
+                              reachedStockLimit
+                                ? disabledQtyButtonStyle
+                                : qtyButtonStyle
+                            }
+                            title={
+                              reachedStockLimit
+                                ? "You have reached the stock limit"
+                                : ""
+                            }
+                          >
+                            +
+                          </button>
+                        </div>
+
+                        <button
+                          onClick={() =>
+                            dispatch(
+                              removeFromCart({
+                                username,
+                                productId: item.id,
+                              })
+                            )
+                          }
+                          style={removeButtonStyle}
+                        >
+                          Remove
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
 
@@ -379,6 +404,13 @@ const qtyButtonStyle = {
   backgroundColor: "#f9fafb",
   cursor: "pointer",
   fontSize: "16px",
+};
+
+const disabledQtyButtonStyle = {
+  ...qtyButtonStyle,
+  backgroundColor: "#e5e7eb",
+  color: "#9ca3af",
+  cursor: "not-allowed",
 };
 
 const qtyTextStyle = {
