@@ -263,7 +263,7 @@ const signInLinkStyle = {
   color: "#fff",
   textDecoration: "none",
   fontSize: "16px",
-  fontWeight: "700",
+  fontWeight: "500",
   fontFamily: "Arial, Helvetica, sans-serif",
   display: "flex",
   alignItems: "center",
