@@ -48,11 +48,14 @@ const pageShellStyle = {
   backgroundColor: colors.pageBg,
   display: "flex",
   flexDirection: "column",
+  fontFamily: "Arial, sans-serif",
 };
 
 const mainStyle = {
   flex: 1,
   width: "100%",
+  display: "flex",
+  flexDirection: "column",
 };
 
 const contentWrapperStyle = {

@@ -7,47 +7,120 @@ export default function Pagination({
 }) {
   if (totalPages <= 1) return null;
 
+  const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
+
+  //prev page
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      onPageChange(currentPage - 1);
+    }
+  };
+
+  // next page
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      onPageChange(currentPage + 1);
+    }
+  };
+
   return (
-    <div
-      style={{
-        marginTop: "24px",
-        display: "flex",
-        gap: "8px",
-        flexWrap: "wrap",
-      }}
-    >
+    <div style={paginationStyle}>
       {/* Previous button */}
-      <button
-        onClick={() => onPageChange(currentPage - 1)}
-        disabled={currentPage === 1}
+      <div
+        onMouseDown={(event) => event.preventDefault()}
+        style={{
+          ...pageButtonStyle,
+          ...(currentPage === 1 ? disabledButtonStyle : {}),
+        }}
+        onClick={(e) => {
+          if (currentPage > 1) {
+            goToPreviousPage()
+            e.currentTarget.blur();
+          }
+        }}
       >
-        Prev
-      </button>
+        «
+      </div>
 
       {/* Page number buttons */}
-      {[...Array(totalPages)].map((_, index) => {
-        const pageNumber = index + 1;
+      {pages.map((pageNumber) => {
+        const isActive = currentPage === pageNumber;
 
         return (
-          <button
+          <div
             key={pageNumber}
-            onClick={() => onPageChange(pageNumber)}
+            onMouseDown={(event) => event.preventDefault()}
             style={{
-              fontWeight: currentPage === pageNumber ? "bold" : "normal",
-            }}
-          >
-            {pageNumber}
-          </button>
-        );
-      })}
+              ...pageButtonStyle,
+              backgroundColor: isActive ? "#4f46e5" : "#fff",
+              color: isActive ? "#fff" : "#4f46e5",
+              border: "1px solid #e5e7eb",
+      }}
+      onClick={() => onPageChange(pageNumber)}
+    >
+      {pageNumber}
+    </div>
+  );
+})}
 
       {/* Next button */}
-      <button
-        onClick={() => onPageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
-      >
-        Next
-      </button>
+      <div
+        onMouseDown={(event) => event.preventDefault()}
+        style={{
+          ...pageButtonStyle,
+          ...(currentPage === totalPages ? disabledButtonStyle : {}),
+        }}
+        onClick={(e) => {
+          if (currentPage < totalPages) {
+            goToNextPage()
+            e.currentTarget.blur();
+          }            
+        }}       
+        >
+          »
+        </div>
     </div>
   );
 }
+
+// Styles Setting
+
+const paginationStyle = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "flex-end",
+  gap: "1px",
+  flexWrap: "wrap",
+};
+
+const pageButtonStyle = {
+  width: "36px",
+  height: "36px",
+  border: "1px solid #e5e7eb",
+  backgroundColor: "#fff",
+  color: "#4f46e5",
+  cursor: "pointer",
+  fontSize: "14px",
+  fontWeight: "500",
+  fontFamily: "Arial, sans-serif",
+  boxSizing: "border-box",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  userSelect: "none",
+  outline: "none",
+  boxShadow: "none",
+  WebkitTapHighlightColor: "transparent",
+};
+
+// const activePageButtonStyle = {
+//   backgroundColor: "#4f46e5",
+//   borderColor: "1px solid #4f46e5",
+//   color: "#fff",
+// };
+
+const disabledButtonStyle = {
+  color: "#9ca3af",
+  cursor: "not-allowed",
+  backgroundColor: "#fff",
+};

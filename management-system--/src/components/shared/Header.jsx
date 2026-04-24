@@ -209,11 +209,13 @@ export default function Header() {
 const headerWrapperStyle = {
   backgroundColor: colors.headerBg,
   color: "#fff",
-  padding: "16px 24px",
+  //padding: "16px 24px",
+  height: "58px",
   fontFamily: "Arial, Helvetica, sans-serif",
 };
 
 const headerInnerStyle = {
+  width: "100%",
   maxWidth: "90%",
   margin: "0 auto",
   display: "flex",
@@ -221,6 +223,7 @@ const headerInnerStyle = {
   justifyContent: "space-between",
   gap: "16px",
   flexWrap: "wrap",
+  height: "100%"
 };
 
 const brandStyle = {

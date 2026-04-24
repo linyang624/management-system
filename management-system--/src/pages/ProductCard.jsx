@@ -19,7 +19,7 @@ export default function ProductCard({ product, children, detailPath }) {
 
         <p style={priceStyle}>${Number(product.price).toFixed(2)}</p>
 
-        <p style={descriptionStyle}>{product.description}</p>
+        {/*<p style={descriptionStyle}>{product.description}</p>*/}
       </div>
     </>
   );
@@ -46,10 +46,10 @@ export default function ProductCard({ product, children, detailPath }) {
 
 const cardStyle = {
   border: "1px solid #e5e7eb",
-  borderRadius: "10px",
-  padding: "12px",
+  borderRadius: "4px",
+  padding: "8px",
   backgroundColor: "#fff",
-  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.06)",
+  boxShadow: "none",
   display: "flex",
   flexDirection: "column",
   height: "100%",
@@ -64,47 +64,51 @@ const linkStyle = {
 
 const imageStyle = {
   width: "100%",
-  height: "220px",
+  height: "150px",
   objectFit: "cover",
-  borderRadius: "8px",
-  marginBottom: "12px",
+  borderRadius: "2px",
+  marginBottom: "8px",
   cursor: "pointer",
 };
 
 const contentStyle = {
   display: "flex",
   flexDirection: "column",
-  gap: "8px",
+  gap: "4px",
 };
 
 const titleStyle = {
   margin: 0,
-  fontSize: "18px",
-  fontWeight: "600",
-  lineHeight: 1.3,
+  fontSize: "13px",
+  fontWeight: "400",
+  lineHeight: 1.25,
+  color: "#4b5563",
+  fontFamily: "Arial, sans-serif",
 };
 
 const priceStyle = {
   margin: 0,
-  fontSize: "22px",
+  fontSize: "16px",
   fontWeight: "700",
   color: "#111827",
+  fontFamily: "Arial, sans-serif",
 };
 
-const descriptionStyle = {
-  margin: 0,
-  fontSize: "14px",
-  color: "#6b7280",
-  lineHeight: 1.5,
-  display: "-webkit-box",
-  WebkitLineClamp: 2,
-  WebkitBoxOrient: "vertical",
-  overflow: "hidden",
-  minHeight: "42px",
-};
+// const descriptionStyle = {
+//   margin: 0,
+//   fontSize: "11px",
+//   color: "#6b7280",
+//   lineHeight: 1.35,
+//   display: "-webkit-box",
+//   WebkitLineClamp: 2,
+//   WebkitBoxOrient: "vertical",
+//   overflow: "hidden",
+//   minHeight: "30px",
+//   fontFamily: "Arial, sans-serif",
+// };
 
 const actionAreaStyle = {
-  marginTop: "auto",
-  paddingTop: "12px",
-  borderTop: "1px solid #f3f4f6",
+  marginTop: "8px",
+  paddingTop: "0",
+  borderTop: "none",
 };

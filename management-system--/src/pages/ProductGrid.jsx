@@ -26,7 +26,7 @@ export default function ProductGrid({ products, renderActions, getDetailPath }) 
 
 const gridStyle = {
   display: "grid",
-  gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
-  gap: "24px",
+  gridTemplateColumns: "repeat(5, 1fr)",
+  gap: "24px 16px",
   alignItems: "stretch",
 };
