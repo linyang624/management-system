@@ -56,8 +56,17 @@ export default function Header() {
   // Show the total products number amount in cart
   const cartItemCount = userCart.items.reduce((sum, item) => sum + item.quantity, 0);
 
+  // add cart message: ?Auth
+  const [showLoginCartModal, setShowLoginCartModal] = useState(false);
+
   // Toggle cart drawer open/close
   const handleCartClick = () => {
+    //cart message
+    if (!isAuthenticated) {
+        setShowLoginCartModal(true);
+        return;
+    }
+
     if (isDrawerOpen) {
       dispatch(closeCartDrawer());
     } else {
@@ -97,6 +106,7 @@ export default function Header() {
     isAuthenticated && user?.role === "admin" ? "/admin/products" : "/products";
 
   return (
+    <>
     <header style={headerWrapperStyle}>
       <div style={headerInnerStyle}>
         {/* Brand / Logo */}
@@ -120,10 +130,17 @@ export default function Header() {
         {/* Right side actions */}
         <div style={headerActionsStyle}>
           {!isAuthenticated ? (
-            <Link to="/signin" style={signInLinkStyle}>
-              <FiUser style={userIconStyle} />
-              Sign In
-            </Link>
+            <>
+                <Link to="/signin" style={signInLinkStyle}>
+                    <FiUser style={userIconStyle} />
+                    Sign In
+                </Link>       
+
+                <button onClick={handleCartClick} style={cartButtonStyle}>
+                    <FiShoppingCart style={cartIconStyle} />
+                </button>
+
+            </>
           ) : (
             <>
               <div style={userStatusStyle}>
@@ -150,6 +167,38 @@ export default function Header() {
         </div>
       </div>
     </header>
+    
+    {showLoginCartModal && (
+        <div style={modalOverlayStyle}>
+            <div style={loginModalStyle}>
+                <button
+                    type="button"
+                    onClick={() => setShowLoginCartModal(false)}
+                    style={modalCloseButtonStyle}
+                >
+                    ×
+                </button>
+
+                <h3 style={modalTitleStyle}>Please sign in first</h3>
+
+                <p style={modalTextStyle}>
+                    You need to sign in before viewing your shopping cart.
+                </p>
+
+                <button
+                    type="button"
+                    onClick={() => {
+                        setShowLoginCartModal(false);
+                        navigate("/signin");
+                    }}
+                    style={modalSignInButtonStyle}
+                >
+                    Sign In
+                </button>
+            </div>
+        </div>
+    )}
+    </>
   );
 }
 
@@ -353,4 +402,68 @@ const cartBadgeStyle = {
   lineHeight: "16px",
   textAlign: "center",
   fontFamily: "Arial, Helvetica, sans-serif",
+};
+
+const modalOverlayStyle = {
+  position: "fixed",
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: "rgba(0, 0, 0, 0.35)",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  zIndex: 999,
+};
+
+const loginModalStyle = {
+  position: "relative",
+  width: "360px",
+  maxWidth: "calc(100% - 40px)",
+  backgroundColor: "#fff",
+  borderRadius: "12px",
+  padding: "32px 28px 28px",
+  boxShadow: "0 12px 30px rgba(0, 0, 0, 0.18)",
+  textAlign: "center",
+  fontFamily: "Arial, Helvetica, sans-serif",
+};
+
+const modalCloseButtonStyle = {
+  position: "absolute",
+  top: "12px",
+  right: "14px",
+  backgroundColor: "transparent",
+  border: "none",
+  fontSize: "26px",
+  lineHeight: "1",
+  cursor: "pointer",
+  color: "#6b7280",
+};
+
+const modalTitleStyle = {
+  margin: "0 0 12px",
+  fontSize: "22px",
+  fontWeight: "700",
+  color: "#111827",
+};
+
+const modalTextStyle = {
+  margin: "0 0 24px",
+  fontSize: "15px",
+  lineHeight: "1.5",
+  color: "#6b7280",
+};
+
+const modalSignInButtonStyle = {
+  width: "100%",
+  height: "44px",
+  border: "none",
+  borderRadius: "6px",
+  backgroundColor: colors.headerBg,
+  color: "#fff",
+  fontSize: "16px",
+  fontWeight: "700",
+  fontFamily: "Arial, Helvetica, sans-serif",
+  cursor: "pointer",
 };
