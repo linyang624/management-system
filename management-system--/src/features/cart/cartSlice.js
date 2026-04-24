@@ -189,6 +189,16 @@ const cartSlice = createSlice({
       userCart.promoMessage = "";
       userCart.promoError = "";
     },
+
+    removeProductFromAllCarts: (state, action) => {
+      const productId = action.payload;
+
+      Object.keys(state.cartsByUser).forEach((username) => {
+        state.cartsByUser[username].items = state.cartsByUser[
+          username
+        ].items.filter((item) => item.id !== productId);
+      });
+    },
   },
 });
 
@@ -202,6 +212,7 @@ export const {
   clearCart,
   applyPromoCode,
   clearPromoFeedback,
+  removeProductFromAllCarts,
 } = cartSlice.actions;
 
 /*

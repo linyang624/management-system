@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
 import {
   getProductByIdApi,
   createProductApi,
   updateProductApi,
   deleteProductApi,
 } from "../api/productApi";
+import { useDispatch, useSelector } from "react-redux";
+import { removeProductFromAllCarts } from "../features/cart/cartSlice";
+
 
 export default function CreateProductPage() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -136,6 +139,10 @@ export default function CreateProductPage() {
       setPageError("");
 
       await deleteProductApi(id, token);
+
+      // Remove this deleted product from all carts in Redux
+      dispatch(removeProductFromAllCarts(id));
+
       alert("Product deleted successfully.");
       navigate("/admin/products");
     } catch (error) {
@@ -278,7 +285,7 @@ export default function CreateProductPage() {
             />
           </div>
         </div>
-
+{/* 
         <div style={{ marginBottom: "16px" }}>
           <label style={{ display: "block", marginBottom: "6px" }}>
             Upload Product Image
@@ -290,7 +297,7 @@ export default function CreateProductPage() {
             onChange={handleImageUpload}
             style={{ marginBottom: "12px" }}
           />
-        </div>
+        </div> */}
 
         <div
           style={{
