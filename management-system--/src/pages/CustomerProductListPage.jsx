@@ -10,6 +10,7 @@ import {
 import { getProductsApi } from "../api/productApi";
 import ProductGrid from "./ProductGrid";
 import Pagination from "./Pagination";
+import "../responsive/ProductListPage.css";
 
 // Number of products shown on each page
 const PRODUCTS_PER_PAGE = 10;
@@ -192,11 +193,11 @@ export default function CustomerProductListPage() {
 
       {/* Sort */}
       {/* Toolbar */}
-      <div style={topRowStyle}>
-        <h2 style={pageTitleStyle}>Products</h2>
+     <div className="product-list-top-row" style={topRowStyle}>
+        <h2 className="product-list-title" style={pageTitleStyle}>Products</h2>
 
-        <div style={rightToolbarStyle}>
-          <div style={sortDropdownStyle}>
+        <div className="product-list-toolbar" style={rightToolbarStyle}>
+          <div className="product-list-sort" style={sortDropdownStyle}>
             <button
               type="button"
               style={sortButtonStyle}

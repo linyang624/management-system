@@ -7,6 +7,7 @@ import { calculateCartTotals } from "../../utils/cartUtils";
 import { colors } from "../../styles/theme";
 import { FiSearch, FiShoppingCart, FiUser } from "react-icons/fi";
 import { FaStar } from "react-icons/fa";
+import "../../responsive/Header.css";
 
 // Top navigation bar
 // Shows total cart value + toggle drawer
@@ -108,15 +109,15 @@ export default function Header() {
   return (
     <>
     <header style={headerWrapperStyle}>
-      <div style={headerInnerStyle}>
+      <div className="header-inner" style={headerInnerStyle}>
         {/* Brand / Logo */}
-        <Link to={homePath} style={brandStyle}>
+        <Link to={homePath} className="header-brand" style={brandStyle}>
           <span style={isMobile ? brandMobileMainStyle : brandMainStyle}>{isMobile ? "M" : "Management"}</span>
           <span style={brandSubStyle}>Chuwa</span>
         </Link>
 
         {/* Search bar */}
-        <div style={searchWrapperStyle}>
+        <div className="header-search" style={searchWrapperStyle}>
           <input
             type="text"
             placeholder="Search"
@@ -128,7 +129,7 @@ export default function Header() {
         </div>
 
         {/* Right side actions */}
-        <div style={headerActionsStyle}>
+        <div className="header-actions" style={headerActionsStyle}>
           {!isAuthenticated ? (
             <>
                 <Link to="/signin" style={signInLinkStyle}>
@@ -149,7 +150,10 @@ export default function Header() {
                     <FaStar style={starIconStyle} />
                 </div>
 
-                <button onClick={handleLogOut} style={logoutButtonStyle}>
+                <button 
+                    className="header-logout-button"
+                    onClick={handleLogOut} 
+                    style={logoutButtonStyle}>
                     Sign Out
                 </button>
               </div>
@@ -210,7 +214,7 @@ const headerWrapperStyle = {
   backgroundColor: colors.headerBg,
   color: "#fff",
   //padding: "16px 24px",
-  height: "58px",
+  minheight: "58px",
   fontFamily: "Arial, Helvetica, sans-serif",
 };
 
@@ -223,7 +227,8 @@ const headerInnerStyle = {
   justifyContent: "space-between",
   gap: "16px",
   flexWrap: "wrap",
-  height: "100%"
+  minHeight: "58px",
+  boxSizing: "border-box",
 };
 
 const brandStyle = {

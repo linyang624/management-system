@@ -9,6 +9,7 @@ import {
 import { getProductsApi } from "../api/productApi";
 import ProductGrid from "./ProductGrid";
 import Pagination from "./Pagination";
+import "../responsive/ProductListPage.css";
 
 // Number of products shown on each page
 const PRODUCTS_PER_PAGE = 10;
@@ -192,8 +193,8 @@ export default function AdminProductListPage() {
 
   return (
     <div style={pageContainerStyle}>
-      <div style={topRowStyle}>
-        <h2 style={pageTitleStyle}>Products</h2>
+      <div className="product-list-top-row" style={topRowStyle}>
+        <h2 className="product-list-title" style={pageTitleStyle}>Products</h2>
 
       {/* Toolbar: result + sort + add product */}
       {/*<div style={toolbarStyle}>*/}
@@ -201,14 +202,14 @@ export default function AdminProductListPage() {
           Showing {filteredProducts.length} products
         </div> */}
 
-          <div style={rightToolbarStyle}>
+          <div className="product-list-toolbar" style={rightToolbarStyle}>
             {/*<select value={sortOrder} onChange={handleSortChange} style={selectStyle}>
               <option value="default">Last added</option>
               <option value="priceAsc">Price low to high</option>
               <option value="priceDesc">Price high to low</option>
             </select>*/}
 
-            <div style={sortDropdownStyle}>
+            <div className="product-list-sort" style={sortDropdownStyle}>
               <button
                 type="button"
                 style={sortButtonStyle}
@@ -238,7 +239,11 @@ export default function AdminProductListPage() {
             </div>
         
 
-            <button onClick={handleAddProduct} style={primaryButtonStyle}>
+            <button 
+              className="product-list-add-button"
+              onClick={handleAddProduct} 
+              style={primaryButtonStyle}
+            >
               Add Product
             </button>
           </div>
