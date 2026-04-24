@@ -37,43 +37,42 @@ export default function ProductDetailPage() {
   const [productError, setProductError] = useState("");
 
   // Load single product from backend
-//   useEffect(() => {
-//     const loadProduct = async () => {
-//       try {
-//         setLoadingProduct(true);
-//         setProductError("");
+  // useEffect(() => {
+  //   const loadProduct = async () => {
+  //     try {
+  //       setLoadingProduct(true);
+  //       setProductError("");
 
-//         const data = await getProductByIdApi(id);
-//         setProduct(data);
-//       } catch (error) {
-//         setProductError(error.message || "Failed to load product");
-//       } finally {
-//         setLoadingProduct(false);
-//       }
-//     };
+  //       const data = await getProductByIdApi(id);
+  //       setProduct(data);
+  //     } catch (error) {
+  //       setProductError(error.message || "Failed to load product");
+  //     } finally {
+  //       setLoadingProduct(false);
+  //     }
+  //   };
 
-//     loadProduct();
-//   }, [id]);
+  //   loadProduct();
+  // }, [id]);
 
   // loading product and error page
   useEffect(() => {
     async function fetchProduct() {
-        try {
-            setLoadingProduct(true);
-            setProductError("");
+      try {
+        setLoadingProduct(true);
+        setProductError("");
 
-            const data = await getProductByIdApi(id);
-            setProduct(data);
-        }
-        catch(error) {
-            navigate("/error", {
-                state: { message: error.message || "Product not found" }
-            });
-        }
-        finally {
-            setLoadingProduct(false);
-        }
+        const data = await getProductByIdApi(id);
+        setProduct(data);
+      } catch (error) {
+        navigate("/error", {
+          state: { message: error.message || "Product not found" },
+        });
+      } finally {
+        setLoadingProduct(false);
+      }
     }
+
     fetchProduct();
   }, [id, navigate]);
 
@@ -121,77 +120,222 @@ export default function ProductDetailPage() {
   };
 
   if (loadingProduct) {
-    return <p style={{ padding: "20px" }}>Loading product...</p>;
+    return <p style={statusTextStyle}>Loading product...</p>;
   }
 
   if (productError) {
     return (
-      <div style={{ padding: "20px" }}>
+      <div style={pageContainerStyle}>
         <p style={{ color: "red" }}>{productError}</p>
       </div>
     );
   }
 
   if (!product) {
-    return <h2 style={{ padding: "20px" }}>Product not found.</h2>;
+    return <h2 style={statusTextStyle}>Product not found.</h2>;
   }
 
   return (
-    <div style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
-      {product.image && (
-        <img
-          src={product.image}
-          alt={product.name}
-          style={{
-            width: "100%",
-            maxWidth: "500px",
-            height: "300px",
-            objectFit: "cover",
-            borderRadius: "8px",
-            marginBottom: "20px",
-          }}
-        />
-      )}
+    <div style={pageContainerStyle}>
+      <h2 style={pageTitleStyle}>Products Detail</h2>
 
-      <h2>{product.name}</h2>
-      <p>
-        <strong>Price:</strong> ${product.price}
-      </p>
-      <p>
-        <strong>Category:</strong> {product.category}
-      </p>
-      <p>
-        <strong>Stock:</strong> {product.stock}
-      </p>
-      <p>{product.description}</p>
+      <div style={detailCardStyle}>
+        <div style={imageSectionStyle}>
+          {product.image && (
+            <img src={product.image} alt={product.name} style={imageStyle} />
+          )}
+        </div>
 
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "12px",
-          flexWrap: "wrap",
-          marginTop: "20px",
-        }}
-      >
-        {!cartItem ? (
-          <button onClick={handleAddToCart}>Add to Cart</button>
-        ) : (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-            }}
-          >
-            <button onClick={handleDecreaseQuantity}>-</button>
-            <span>{cartItem.quantity}</span>
-            <button onClick={handleIncreaseQuantity}>+</button>
+        <div style={infoSectionStyle}>
+          <p style={categoryStyle}>{product.category}</p>
+
+          <h1 style={productNameStyle}>{product.name}</h1>
+
+          <div style={priceRowStyle}>
+            <span style={priceStyle}>
+              ${Number(product.price).toFixed(2)}
+            </span>
+
+            {Number(product.stock) <= 0 && (
+              <span style={stockBadgeStyle}>Out of Stock</span>
+            )}
           </div>
-        )}
 
-        {isAdmin && <button onClick={handleEdit}>Edit</button>}
+          <p style={descriptionStyle}>{product.description}</p>
+
+          <p style={stockTextStyle}>Stock: {product.stock}</p>
+
+          <div style={actionRowStyle}>
+            {!cartItem ? (
+              <button onClick={handleAddToCart} style={primaryButtonStyle}>
+                Add to Cart
+              </button>
+            ) : (
+              <div style={qtyContainerStyle}>
+                <button onClick={handleDecreaseQuantity} style={qtyButtonStyle}>
+                  -
+                </button>
+
+                <span style={qtyTextStyle}>{cartItem.quantity}</span>
+
+                <button onClick={handleIncreaseQuantity} style={qtyButtonStyle}>
+                  +
+                </button>
+              </div>
+            )}
+
+            {isAdmin && (
+              <button onClick={handleEdit} style={secondaryButtonStyle}>
+                Edit
+              </button>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
 }
+
+/* =======================
+   Styles
+======================= */
+
+const pageContainerStyle = {
+  maxWidth: "1200px",
+  margin: "0 auto",
+  padding: "32px 24px",
+};
+
+const pageTitleStyle = {
+  fontSize: "32px",
+  margin: "0 0 24px 0",
+};
+
+const statusTextStyle = {
+  padding: "24px",
+};
+
+const detailCardStyle = {
+  backgroundColor: "#fff",
+  borderRadius: "10px",
+  padding: "32px",
+  display: "grid",
+  gridTemplateColumns: "minmax(300px, 1.4fr) minmax(280px, 1fr)",
+  gap: "48px",
+  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.06)",
+};
+
+const imageSectionStyle = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+};
+
+const imageStyle = {
+  width: "100%",
+  height: "460px",
+  objectFit: "cover",
+  borderRadius: "8px",
+};
+
+const infoSectionStyle = {
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+};
+
+const categoryStyle = {
+  margin: "0 0 10px 0",
+  color: "#6b7280",
+  fontSize: "14px",
+};
+
+const productNameStyle = {
+  margin: "0 0 16px 0",
+  fontSize: "32px",
+  lineHeight: 1.2,
+};
+
+const priceRowStyle = {
+  display: "flex",
+  alignItems: "center",
+  gap: "12px",
+  marginBottom: "20px",
+};
+
+const priceStyle = {
+  fontSize: "30px",
+  fontWeight: "700",
+};
+
+const stockBadgeStyle = {
+  fontSize: "12px",
+  color: "#dc2626",
+  backgroundColor: "#fee2e2",
+  padding: "4px 8px",
+  borderRadius: "4px",
+};
+
+const descriptionStyle = {
+  margin: "0 0 16px 0",
+  color: "#6b7280",
+  lineHeight: 1.6,
+  fontSize: "15px",
+};
+
+const stockTextStyle = {
+  margin: "0 0 24px 0",
+  color: "#374151",
+  fontSize: "14px",
+};
+
+const actionRowStyle = {
+  display: "flex",
+  alignItems: "center",
+  gap: "14px",
+  flexWrap: "wrap",
+};
+
+const primaryButtonStyle = {
+  padding: "12px 22px",
+  backgroundColor: "#6366f1",
+  color: "#fff",
+  border: "none",
+  borderRadius: "6px",
+  cursor: "pointer",
+  fontSize: "15px",
+  fontWeight: "600",
+};
+
+const secondaryButtonStyle = {
+  padding: "12px 22px",
+  backgroundColor: "#fff",
+  color: "#374151",
+  border: "1px solid #d1d5db",
+  borderRadius: "6px",
+  cursor: "pointer",
+  fontSize: "15px",
+};
+
+const qtyContainerStyle = {
+  display: "flex",
+  alignItems: "center",
+  border: "1px solid #d1d5db",
+  borderRadius: "6px",
+  overflow: "hidden",
+};
+
+const qtyButtonStyle = {
+  width: "40px",
+  height: "40px",
+  border: "none",
+  backgroundColor: "#f9fafb",
+  cursor: "pointer",
+  fontSize: "16px",
+};
+
+const qtyTextStyle = {
+  width: "44px",
+  textAlign: "center",
+  fontWeight: "600",
+};

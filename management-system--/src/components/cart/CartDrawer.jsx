@@ -47,10 +47,7 @@ export default function CartDrawer() {
 
   return (
     <>
-      <div
-        onClick={handleClose}
-        style={overlayStyle}
-      />
+      <div onClick={handleClose} style={overlayStyle} />
 
       <aside style={drawerStyle}>
         <div style={headerStyle}>
@@ -66,11 +63,14 @@ export default function CartDrawer() {
           </button>
         </div>
 
-        <div style={contentStyle}>
-          {userCart.items.length === 0 ? (
+        {userCart.items.length === 0 ? (
+          <div style={emptyStyle}>
             <p>Your cart is empty.</p>
-          ) : (
-            <>
+          </div>
+        ) : (
+          <div style={contentStyle}>
+            {/* Scrollable item list */}
+            <div style={itemsScrollStyle}>
               {userCart.items.map((item) => (
                 <div key={item.id} style={itemCardStyle}>
                   <img
@@ -78,9 +78,12 @@ export default function CartDrawer() {
                     alt={item.name}
                     style={{ ...imageStyle, cursor: "pointer" }}
                     onClick={() => handleGoToProduct(item.id)}
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                    }}
                   />
 
-                  <div style={{ flex: 1 }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={itemTopRowStyle}>
                       <h4
                         style={{
@@ -148,35 +151,36 @@ export default function CartDrawer() {
                   </div>
                 </div>
               ))}
+            </div>
 
-              <div style={summaryStyle}>
-                <div style={summaryRowStyle}>
-                  <span>Subtotal</span>
-                  <span>${subtotal.toFixed(2)}</span>
-                </div>
+            {/* Fixed summary + checkout button */}
+            <div style={footerSummaryStyle}>
+              <div style={summaryRowStyle}>
+                <span>Subtotal</span>
+                <span>${subtotal.toFixed(2)}</span>
+              </div>
 
-                <div style={summaryRowStyle}>
-                  <span>Tax</span>
-                  <span>${tax.toFixed(2)}</span>
-                </div>
+              <div style={summaryRowStyle}>
+                <span>Tax</span>
+                <span>${tax.toFixed(2)}</span>
+              </div>
 
-                <div style={summaryRowStyle}>
-                  <span>Discount</span>
-                  <span>- ${discount.toFixed(2)}</span>
-                </div>
+              <div style={summaryRowStyle}>
+                <span>Discount</span>
+                <span>- ${discount.toFixed(2)}</span>
+              </div>
 
-                <div style={totalRowStyle}>
-                  <span>Estimated total</span>
-                  <span>${total.toFixed(2)}</span>
-                </div>
+              <div style={totalRowStyle}>
+                <span>Estimated total</span>
+                <span>${total.toFixed(2)}</span>
               </div>
 
               <button onClick={handleCheckout} style={checkoutButtonStyle}>
                 Continue to checkout
               </button>
-            </>
-          )}
-        </div>
+            </div>
+          </div>
+        )}
       </aside>
     </>
   );
@@ -191,20 +195,22 @@ const overlayStyle = {
 
 const drawerStyle = {
   position: "fixed",
-  top: 0,
-  right: 0,
-  width: "380px",
-  maxWidth: "100%",
-  height: "100vh",
+  top: "0",
+  right: "0",
+  width: "420px",
+  maxWidth: "calc(100vw - 48px)",
+  height: "80vh",
   backgroundColor: "#fff",
   zIndex: 1000,
   display: "flex",
   flexDirection: "column",
-  boxShadow: "-4px 0 12px rgba(0, 0, 0, 0.18)",
+  boxShadow: "0 8px 24px rgba(0, 0, 0, 0.22)",
+  borderRadius: "8px",
+  overflow: "hidden",
 };
 
 const headerStyle = {
-  backgroundColor: "#5a54f9",
+  backgroundColor: "#6366f1",
   color: "#fff",
   padding: "20px 24px",
   display: "flex",
@@ -221,26 +227,44 @@ const closeButtonStyle = {
   lineHeight: 1,
 };
 
+const emptyStyle = {
+  padding: "24px",
+};
+
 const contentStyle = {
   flex: 1,
-  padding: "16px 20px 24px",
+  display: "flex",
+  flexDirection: "column",
+  minHeight: 0,
+};
+
+const itemsScrollStyle = {
+  flex: 1,
+  padding: "16px 20px",
   overflowY: "auto",
+  minHeight: 0,
+};
+
+const footerSummaryStyle = {
+  padding: "16px 20px 20px",
+  borderTop: "1px solid #e5e7eb",
+  backgroundColor: "#fff",
 };
 
 const itemCardStyle = {
   display: "flex",
   gap: "14px",
   padding: "14px 0",
-  borderBottom: "1px solid #e5e5e5",
+  borderBottom: "1px solid #e5e7eb",
 };
 
 const imageStyle = {
   width: "82px",
   height: "82px",
   objectFit: "cover",
-  borderRadius: "4px",
+  borderRadius: "6px",
   flexShrink: 0,
-  border: "1px solid #eee",
+  backgroundColor: "#f3f4f6",
 };
 
 const itemTopRowStyle = {
@@ -253,7 +277,8 @@ const itemTopRowStyle = {
 
 const itemNameStyle = {
   margin: 0,
-  fontSize: "18px",
+  fontSize: "16px",
+  fontWeight: "600",
 };
 
 const itemPriceStyle = {
@@ -271,39 +296,35 @@ const itemBottomRowStyle = {
 };
 
 const qtyBoxStyle = {
-  display: "flex",
+  display: "inline-flex",
   alignItems: "center",
-  border: "1px solid #ccc",
-  borderRadius: "4px",
+  width: "fit-content",
+  border: "1px solid #d1d5db",
+  borderRadius: "6px",
   overflow: "hidden",
 };
 
 const qtyButtonStyle = {
-  width: "28px",
-  height: "28px",
+  width: "36px",
+  height: "36px",
   border: "none",
-  backgroundColor: "#f7f7f7",
+  backgroundColor: "#f9fafb",
   cursor: "pointer",
+  fontSize: "16px",
 };
 
 const qtyTextStyle = {
-  width: "32px",
+  width: "40px",
   textAlign: "center",
-  fontSize: "14px",
+  fontWeight: "600",
 };
 
 const removeButtonStyle = {
   background: "transparent",
   border: "none",
-  textDecoration: "underline",
-  color: "#666",
+  color: "#6b7280",
   cursor: "pointer",
-};
-
-const summaryStyle = {
-  marginTop: "20px",
-  paddingTop: "16px",
-  borderTop: "1px solid #ddd",
+  fontSize: "13px",
 };
 
 const summaryRowStyle = {
@@ -322,13 +343,13 @@ const totalRowStyle = {
 };
 
 const checkoutButtonStyle = {
-  marginTop: "20px",
+  marginTop: "18px",
   width: "100%",
   padding: "14px 16px",
-  backgroundColor: "#5a54f9",
+  backgroundColor: "#6366f1",
   color: "#fff",
   border: "none",
-  borderRadius: "4px",
+  borderRadius: "6px",
   cursor: "pointer",
   fontSize: "15px",
   fontWeight: "bold",
