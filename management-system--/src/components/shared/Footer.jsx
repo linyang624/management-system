@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { colors } from "../../styles/theme";
+import { FaYoutube, FaTwitter, FaFacebookSquare } from "react-icons/fa";
 
 // Bottom footer section
 // Shows copyright + social links + quick links
@@ -8,27 +9,27 @@ export default function Footer() {
     <footer style={footerWrapperStyle}>
       <div style={footerInnerStyle}>
         {/* Left section */}
-        <div style={footerSectionStyle}>
+        <div style={{footerSectionStyle, justifyContent: "flex-start"}}>
           <span style={footerTextStyle}>©2022 All Rights Reserved.</span>
         </div>
 
         {/* Middle section */}
-        <div style={footerSectionStyle}>
+        <div style={{ ...footerSectionStyle, justifyContent: "center" }}>
           <div style={socialListStyle}>
             <a href="/" style={socialLinkStyle} aria-label="YouTube">
-              YouTube
+              <FaYoutube />
             </a>
             <a href="/" style={socialLinkStyle} aria-label="Twitter">
-              Twitter
+              <FaTwitter />
             </a>
             <a href="/" style={socialLinkStyle} aria-label="Facebook">
-              Facebook
+              <FaFacebookSquare />
             </a>
           </div>
         </div>
 
         {/* Right section */}
-        <div style={footerSectionStyle}>
+        <div style={{ ...footerSectionStyle, justifyContent: "flex-end" }}>
           <div style={footerLinkGroupStyle}>
             <Link to="/" style={footerLinkStyle}>
               Contact us
@@ -53,12 +54,13 @@ export default function Footer() {
 const footerWrapperStyle = {
   backgroundColor: colors.headerBg,
   color: "#fff",
-  padding: "20px 24px",
+  padding: "20px 80px",
   marginTop: "40px",
+  fontFamily: "Arial, Helvetica, sans-serif",
 };
 
 const footerInnerStyle = {
-  maxWidth: "1200px",
+  Width: "100%",
   margin: "0 auto",
   display: "flex",
   alignItems: "center",
@@ -70,9 +72,9 @@ const footerInnerStyle = {
 const footerSectionStyle = {
   display: "flex",
   alignItems: "center",
-  justifyContent: "center",
-  flex: 1,
-  minWidth: "220px",
+//   justifyContent: "center",
+//   flex: 1,
+//   minWidth: "220px",
 };
 
 const footerTextStyle = {
@@ -90,7 +92,7 @@ const socialListStyle = {
 const socialLinkStyle = {
   color: "#fff",
   textDecoration: "none",
-  fontSize: "14px",
+  fontSize: "18px",
 };
 
 const footerLinkGroupStyle = {
