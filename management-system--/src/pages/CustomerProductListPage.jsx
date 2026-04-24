@@ -5,6 +5,7 @@ import {
   addToCart,
   increaseQuantity,
   decreaseQuantity,
+  syncCartWithProducts,
 } from "../features/cart/cartSlice";
 import { getProductsApi } from "../api/productApi";
 import ProductGrid from "./ProductGrid";
@@ -73,6 +74,10 @@ export default function CustomerProductListPage() {
 
         const data = await getProductsApi(sortParam);
         setProducts(data);
+
+        // Remove deleted products from cart after loading latest products
+        dispatch(syncCartWithProducts(data));
+
       } catch (error) {
         setProductError(error.message || "Failed to load products");
       } finally {
@@ -81,7 +86,7 @@ export default function CustomerProductListPage() {
     };
 
     loadProducts();
-  }, [sortOrder]);
+  }, [sortOrder, dispatch]);
 
   /*
     Sync searchTerm from URL query string.

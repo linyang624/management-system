@@ -199,6 +199,26 @@ const cartSlice = createSlice({
         ].items.filter((item) => item.id !== productId);
       });
     },
+
+    /*
+      Sync cart with latest product list from backend
+
+      If a product was deleted by admin in another browser,
+      the product list will no longer contain it.
+      This removes those deleted products from all saved carts.
+    */
+    syncCartWithProducts: (state, action) => {
+      const products = action.payload;
+
+      const validProductIds = products.map((product) => product.id);
+
+      Object.keys(state.cartsByUser).forEach((username) => {
+        state.cartsByUser[username].items = state.cartsByUser[
+          username
+        ].items.filter((item) => validProductIds.includes(item.id));
+      });
+    },
+
   },
 });
 
@@ -213,6 +233,7 @@ export const {
   applyPromoCode,
   clearPromoFeedback,
   removeProductFromAllCarts,
+  syncCartWithProducts,
 } = cartSlice.actions;
 
 /*
