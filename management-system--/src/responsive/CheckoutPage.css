@@ -1,0 +1,73 @@
+/* Responsive styles for Checkout page */
+
+@media (max-width: 900px) {
+  .checkout-page {
+    padding: 40px 28px 28px !important;
+  }
+
+  .checkout-layout {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+
+  .checkout-summary-card {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .checkout-page {
+    padding: 36px 24px 28px !important;
+  }
+
+  .checkout-title {
+    text-align: center !important;
+    font-size: 28px !important;
+  }
+
+  .checkout-item-card {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+
+  .checkout-item-image {
+    width: 100% !important;
+    height: 220px !important;
+    border-radius: 4px !important;
+  }
+
+  .checkout-item-info {
+    width: 100% !important;
+  }
+
+  .checkout-remove-button {
+    margin-left: 0 !important;
+    display: block !important;
+    margin-top: 4px !important;
+  }
+
+  .checkout-promo-row {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  .checkout-promo-row button {
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .checkout-page {
+    padding: 32px 16px 24px !important;
+  }
+
+  .checkout-item-image {
+    height: 180px !important;
+  }
+
+  .checkout-summary-card {
+    padding: 18px !important;
+  }
+}

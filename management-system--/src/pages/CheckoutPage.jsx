@@ -10,6 +10,7 @@ import {
 import { calculateCartTotals } from "../utils/cartUtils";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "../responsive/CheckoutPage.css";
 
 // Full checkout page (final review)
 export default function CheckoutPage() {
@@ -57,25 +58,26 @@ export default function CheckoutPage() {
   };
 
   return (
-    <div style={pageContainerStyle}>
-      <h2 style={pageTitleStyle}>Checkout</h2>
+    <div className="checkout-page" style={pageContainerStyle}>
+      <h2 className="checkout-title" style={pageTitleStyle}>Checkout</h2>
 
       {userCart.items.length === 0 ? (
         <p>Your cart is empty.</p>
       ) : (
-        <div style={layoutStyle}>
+        <div className="checkout-layout" style={layoutStyle}>
           {/* LEFT: Items */}
           <div>
             {userCart.items.map((item) => (
-              <div key={item.id} style={itemCardStyle}>
+              <div key={item.id} className="checkout-item-card" style={itemCardStyle}>
                 <img
+                  className="checkout-item-image"
                   src={item.image}
                   alt={item.name}
                   onClick={() => handleGoToProduct(item.id)}
                   style={imageStyle}
                 />
 
-                <div style={{ flex: 1 }}>
+                <div className="checkout-item-info" style={{ flex: 1 }}>
                   <h4
                     onClick={() => handleGoToProduct(item.id)}
                     style={itemNameStyle}
@@ -120,6 +122,7 @@ export default function CheckoutPage() {
                   </div>
 
                   <button
+                    className="checkout-remove-button"
                     onClick={() =>
                       dispatch(
                         removeFromCart({
@@ -138,7 +141,7 @@ export default function CheckoutPage() {
           </div>
 
           {/* RIGHT: Summary */}
-          <div style={summaryCardStyle}>
+          <div className="checkout-summary-card" style={summaryCardStyle}>
             <h3>Order Summary</h3>
 
             <div style={summaryRowStyle}>
@@ -161,7 +164,7 @@ export default function CheckoutPage() {
               <span>${total.toFixed(2)}</span>
             </div>
 
-            <div style={promoRowStyle}>
+            <div className="checkout-promo-row" style={promoRowStyle}>
               <input
                 type="text"
                 placeholder="Promo code"
