@@ -215,7 +215,7 @@ export default function AdminProductListPage() {
                 onClick={() => setIsSortOpen(!isSortOpen)}              
               >
                 <span>{currentSortLabel}</span>
-                <span style={sortArrowStyle}>▴</span>          
+                <span style={sortArrowStyle}>{isSortOpen ? "▴" : "▾"}</span>         
               </button>
 
               {isSortOpen && (

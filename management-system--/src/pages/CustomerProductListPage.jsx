@@ -12,7 +12,7 @@ import ProductGrid from "./ProductGrid";
 import Pagination from "./Pagination";
 
 // Number of products shown on each page
-const PRODUCTS_PER_PAGE = 8;
+const PRODUCTS_PER_PAGE = 10;
 
 // Customer product list page
 // Requirements:
@@ -51,6 +51,17 @@ export default function CustomerProductListPage() {
 
   // Sort dropdown state
   const [sortOrder, setSortOrder] = useState("default");
+
+  // Sort Button
+  const [isSortOpen, setIsSortOpen] = useState(false);
+ 
+  const sortOptions = [
+    { value: "default", label: "Last added" },
+    { value: "priceAsc", label: "Price: low to high" },
+    { value: "priceDesc", label: "Price: high to low" },
+  ];
+
+  const currentSortLabel = sortOptions.find((option) => option.value === sortOrder)?.label || "Last added";
 
   // Current page number
   const [currentPage, setCurrentPage] = useState(1);
@@ -136,9 +147,10 @@ export default function CustomerProductListPage() {
   }, [filteredProducts, currentPage]);
 
   // Sort dropdown handler
-  const handleSortChange = (e) => {
-    setSortOrder(e.target.value);
+  const handleSortChange = (value) => {
+    setSortOrder(value);
     setCurrentPage(1);
+    setIsSortOpen(false);
   };
 
   // Add to cart
@@ -176,30 +188,42 @@ export default function CustomerProductListPage() {
 
   return (
     <div style={pageContainerStyle}>
-      <h2 style={pageTitleStyle}>Products</h2>
+      {/* <h2 style={pageTitleStyle}>Products</h2>*/}
 
       {/* Sort */}
       {/* Toolbar */}
-      <div style={toolbarStyle}>
-        <div style={resultTextStyle}>
-          Showing {filteredProducts.length} product
-          {filteredProducts.length !== 1 ? "s" : ""}
-        </div>
+      <div style={topRowStyle}>
+        <h2 style={pageTitleStyle}>Products</h2>
 
-        <div style={sortWrapperStyle}>
-          <label htmlFor="sort" style={sortLabelStyle}>
-            Sort by:
-          </label>
-          <select
-            id="sort"
-            value={sortOrder}
-            onChange={handleSortChange}
-            style={selectStyle}
-          >
-            <option value="default">Last added</option>
-            <option value="priceAsc">Price low to high</option>
-            <option value="priceDesc">Price high to low</option>
-          </select>
+        <div style={rightToolbarStyle}>
+          <div style={sortDropdownStyle}>
+            <button
+              type="button"
+              style={sortButtonStyle}
+              onClick={() => setIsSortOpen(!isSortOpen)}
+            >
+              <span>{currentSortLabel}</span>
+              <span style={sortArrowStyle}>{isSortOpen ? "▴" : "▾"}</span>
+            </button>
+
+            {isSortOpen && (
+              <div style={sortMenuStyle}>
+                {sortOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    style={sortOptionStyle}
+                    onClick={() => handleSortChange(option.value)}
+                  >
+                    <span style={sortCheckStyle}>
+                      {sortOrder === option.value ? "✓" : ""}
+                    </span>
+                    <span>{option.label}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -209,6 +233,7 @@ export default function CustomerProductListPage() {
         <p style={{ color: "red" }}>{productError}</p>
       ) : (
         <>
+        <div style={productListBoxStyle}>
           <ProductGrid
             products={paginatedProducts}
             getDetailPath={(product) => `/products/${product.id}`}
@@ -217,40 +242,47 @@ export default function CustomerProductListPage() {
                 (item) => item.id === product.id
               );
 
-              return !cartItem ? (
-                <button
-                  onClick={() => handleAddToCart(product)}
-                  style={primaryButtonStyle}
-                >
-                  Add to Cart
-                </button>
-              ) : (
-                <div style={qtyContainerStyle}>
+              return (
+                <div style={cardActionRowStyle}>
+                  {!cartItem ? (
                     <button
-                      onClick={() => handleDecreaseQuantity(product.id)}
-                      style={qtyButtonStyle}
+                      onClick={() => handleAddToCart(product)}
+                      style={primaryButtonStyle}
                     >
-                      -
+                      Add
                     </button>
+                  ) : (
+                    <div style={qtyContainerStyle}>
+                      <button
+                        onClick={() => handleDecreaseQuantity(product.id)}
+                        style={qtyButtonStyle}
+                      >
+                        -
+                      </button>
 
-                    <span style={qtyTextStyle}>{cartItem.quantity}</span>
+                      <span style={qtyTextStyle}>{cartItem.quantity}</span>
 
-                    <button
-                      onClick={() => handleIncreaseQuantity(product.id)}
-                      style={qtyButtonStyle}
-                    >
-                      +
-                    </button>
+                      <button
+                        onClick={() => handleIncreaseQuantity(product.id)}
+                        style={qtyButtonStyle}
+                      >
+                        +
+                      </button>
+                    </div>
+                  )}
                 </div>
               );
             }}
           />
-
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
-          />
+        </div>
+          
+          <div style={paginationWrapperStyle}>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
+          </div>
         </>
       )}
     </div>
@@ -262,86 +294,235 @@ export default function CustomerProductListPage() {
 ======================= */
 
 const pageContainerStyle = {
-  maxWidth: "1200px",
+  maxWidth: "1320px",
   margin: "0 auto",
-  padding: "24px",
+  padding: "48px 32px 28px",
+  fontFamily: "Arial, sans-serif",
+  boxSizing: "border-box",
 };
 
 const pageTitleStyle = {
-  fontSize: "32px",
-  marginBottom: "20px",
+  fontSize: "28px",
+  margin: 0,
+  fontWeight: "700",
+  color: "#111827",
+  fontFamily: "Arial, sans-serif",
 };
 
+// const selectStyle = {
+//   padding: "10px 12px",
+//   borderRadius: "6px",
+//   border: "1px solid #d1d5db",
+//   fontSize: "14px",
+//   backgroundColor: "#fff",
+// };
 
-const selectStyle = {
-  padding: "10px 12px",
-  borderRadius: "6px",
-  border: "1px solid #d1d5db",
-  fontSize: "14px",
-  backgroundColor: "#fff",
-};
+// const toolbarStyle = {
+//   display: "flex",
+//   justifyContent: "space-between",
+//   alignItems: "center",
+//   gap: "16px",
+//   marginBottom: "24px",
+//   flexWrap: "wrap",
+// };
 
-const toolbarStyle = {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  gap: "16px",
-  marginBottom: "24px",
-  flexWrap: "wrap",
-};
+// const resultTextStyle = {
+//   fontSize: "15px",
+//   color: "#6b7280",
+// };
 
-const resultTextStyle = {
-  fontSize: "15px",
-  color: "#6b7280",
-};
+// const sortWrapperStyle = {
+//   display: "flex",
+//   alignItems: "center",
+//   gap: "8px",
+// };
 
-const sortWrapperStyle = {
-  display: "flex",
-  alignItems: "center",
-  gap: "8px",
-};
-
-const sortLabelStyle = {
-  fontSize: "14px",
-  color: "#374151",
-};
+// const sortLabelStyle = {
+//   fontSize: "14px",
+//   color: "#374151",
+// };
 
 const primaryButtonStyle = {
-  padding: "10px 14px",
-  backgroundColor: "#6366f1",
+  width: "100%",
+  height: "34px",
+  padding: 0,
+  backgroundColor: "#4f46e5",
   color: "#fff",
-  border: "none",
-  borderRadius: "6px",
+  border: "1px solid #4f46e5",
+  borderRadius: "4px",
   cursor: "pointer",
-  fontSize: "14px",
-  fontWeight: "500",
+  fontSize: "12px",
+  fontWeight: "700",
+  fontFamily: "Arial, sans-serif",
+  boxSizing: "border-box",
 };
 
-const secondaryButtonStyle = {
-  padding: "10px 14px",
-  backgroundColor: "#fff",
-  color: "#374151",
-  border: "1px solid #d1d5db",
-  borderRadius: "6px",
-  cursor: "pointer",
-  fontSize: "14px",
+// const secondaryButtonStyle = {
+//   padding: "10px 14px",
+//   backgroundColor: "#fff",
+//   color: "#374151",
+//   border: "1px solid #d1d5db",
+//   borderRadius: "6px",
+//   cursor: "pointer",
+//   fontSize: "14px",
+// };
+
+// const qtyButtonStyle = {
+//   width: "28px",
+//   height: "28px",
+//   border: "1px solid #d1d5db",
+//   backgroundColor: "#fff",
+//   cursor: "pointer",
+// };
+
+// const qtyContainerStyle = {
+//   display: "flex",
+//   alignItems: "center",
+//   gap: "8px",
+// };
+
+// const qtyTextStyle = {
+//   minWidth: "20px",
+//   textAlign: "center",
+// };
+
+const qtyContainerStyle = {
+  width: "100%",
+  display: "flex",
+  alignItems: "center",
+  height: "34px",
+  backgroundColor: "#4f46e5",
+  borderRadius: "4px",
+  overflow: "hidden",
 };
 
 const qtyButtonStyle = {
-  width: "28px",
-  height: "28px",
-  border: "1px solid #d1d5db",
-  backgroundColor: "#fff",
+  flex: 1,
+  height: "34px",
+  border: "1px solid #4f46e5",
+  backgroundColor: "#4f46e5",
+  color: "#fff",
   cursor: "pointer",
-};
-
-const qtyContainerStyle = {
-  display: "flex",
-  alignItems: "center",
-  gap: "8px",
+  fontSize: "13px",
+  fontWeight: "500",
+  fontFamily: "Arial, sans-serif",
+  boxSizing: "border-box",
 };
 
 const qtyTextStyle = {
-  minWidth: "20px",
+  flex: 1,
+  height: "34px",
+  lineHeight: "34px",
   textAlign: "center",
+  backgroundColor: "#4f46e5",
+  color: "#fff",
+  fontSize: "12px",
+  fontWeight: "500",
+  fontFamily: "Arial, sans-serif",
+};
+
+const topRowStyle = {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  marginBottom: "32px",
+};
+
+const rightToolbarStyle = {
+  display: "flex",
+  gap: "12px",
+  alignItems: "center",
+};
+
+const sortDropdownStyle = {
+  position: "relative",
+  width: "165px",
+  fontFamily: "Arial, sans-serif",
+};
+
+const sortButtonStyle = {
+  width: "100%",
+  height: "38px",
+  padding: "0 10px 0 18px",
+  border: "1px solid #d1d5db",
+  borderRadius: "3px 3px 0 0",
+  backgroundColor: "#fff",
+  color: "#333",
+  cursor: "pointer",
+  fontSize: "13px",
+  fontWeight: "500",
+  fontFamily: "Arial, sans-serif",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  boxSizing: "border-box",
+};
+
+const sortArrowStyle = {
+  fontSize: "10px",
+  color: "#555",
+  lineHeight: 1,
+};
+
+const sortMenuStyle = {
+  position: "absolute",
+  top: "38px",
+  left: 0,
+  width: "100%",
+  padding: "8px 0",
+  backgroundColor: "#fff",
+  borderLeft: "1px solid #d1d5db",
+  borderRight: "1px solid #d1d5db",
+  borderBottom: "1px solid #d1d5db",
+  borderRadius: "0",
+  zIndex: 50,
+  boxSizing: "border-box",
+};
+
+const sortOptionStyle = {
+  width: "100%",
+  height: "34px",
+  padding: "0 12px",
+  border: "none",
+  backgroundColor: "#fff",
+  color: "#222",
+  cursor: "pointer",
+  fontSize: "12px",
+  fontWeight: "400",
+  fontFamily: "Arial, sans-serif",
+  display: "flex",
+  alignItems: "center",
+  gap: "8px",
+  textAlign: "left",
+  boxSizing: "border-box",
+};
+
+const sortCheckStyle = {
+  width: "14px",
+  display: "inline-block",
+  textAlign: "center",
+  fontSize: "13px",
+  color: "#222",
+};
+
+const productListBoxStyle = {
+  backgroundColor: "#fff",
+  padding: "22px 24px",
+  borderRadius: "2px",
+  boxSizing: "border-box",
+  width: "100%",
+  overflow: "visible",
+};
+
+const paginationWrapperStyle = {
+  display: "flex",
+  justifyContent: "flex-end",
+  marginTop: "24px",
+};
+
+const cardActionRowStyle = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  width: "100%",
 };
