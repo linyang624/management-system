@@ -12,7 +12,6 @@ import { calculateCartTotals } from "../../utils/cartUtils";
 import { useState, useEffect } from "react";
 import "../../responsive/CartDrawer.css";
 
-
 export default function CartDrawer() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -24,12 +23,13 @@ export default function CartDrawer() {
   const username = user?.email || "guest";
 
   const [promoInput, setPromoInput] = useState("");
-  useEffect(() => {
-    return () => {
-      dispatch(clearPromoFeedback(username));
-    };
-  }, [dispatch, username]);
 
+  useEffect(() => {
+    if (isDrawerOpen) {
+      setPromoInput("");
+      dispatch(clearPromoFeedback(username));
+    }
+  }, [isDrawerOpen, dispatch, username]);
 
   const userCart =
     useSelector((state) => state.cart.cartsByUser[username]) || {
@@ -41,23 +41,32 @@ export default function CartDrawer() {
     };
 
   const { subtotal, discount, tax, total } = calculateCartTotals(userCart);
+  const isCartEmpty = userCart.items.length === 0;
 
   if (!isAuthenticated || !isDrawerOpen) return null;
 
   const handleClose = () => {
+    setPromoInput("");
+    dispatch(clearPromoFeedback(username));
     dispatch(closeCartDrawer());
   };
 
   const handleCheckout = () => {
+    setPromoInput("");
+    dispatch(clearPromoFeedback(username));
     dispatch(closeCartDrawer());
     navigate("/checkout");
   };
 
   const handleApplyPromo = () => {
+    if (isCartEmpty) return;
+
     dispatch(applyPromoCode({ username, code: promoInput }));
   };
 
   const handleGoToProduct = (productId) => {
+    setPromoInput("");
+    dispatch(clearPromoFeedback(username));
     dispatch(closeCartDrawer());
     navigate(`/products/${productId}`);
   };
@@ -80,15 +89,15 @@ export default function CartDrawer() {
           </button>
         </div>
 
-        {userCart.items.length === 0 ? (
-          <div style={emptyStyle}>
-            <p>Your cart is empty.</p>
-          </div>
-        ) : (
-          <div style={contentStyle}>
-            {/* Scrollable item list */}
-            <div className="cart-items-scroll" style={itemsScrollStyle}>
-              {userCart.items.map((item) => (
+        <div style={contentStyle}>
+          {/* Scrollable item list */}
+          <div className="cart-items-scroll" style={itemsScrollStyle}>
+            {isCartEmpty ? (
+              <div style={emptyStyle}>
+                <p>Your cart is empty.</p>
+              </div>
+            ) : (
+              userCart.items.map((item) => (
                 <div key={item.id} className="cart-item-card" style={itemCardStyle}>
                   <img
                     className="cart-item-image"
@@ -169,11 +178,12 @@ export default function CartDrawer() {
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
+              ))
+            )}
+          </div>
 
-            {/* Fixed summary + checkout button */}
-            <div className="cart-promo-section" style={promoSectionStyle}>
+          {/* Fixed promo + summary + checkout button */}
+          <div className="cart-promo-section" style={promoSectionStyle}>
             <label style={promoLabelStyle}>Apply Discount Code</label>
 
             <div className="cart-promo-row" style={promoRowStyle}>
@@ -185,7 +195,11 @@ export default function CartDrawer() {
                 style={promoInputStyle}
               />
 
-              <button onClick={handleApplyPromo} style={promoButtonStyle}>
+              <button
+                onClick={handleApplyPromo}
+                disabled={isCartEmpty}
+                style={isCartEmpty ? disabledPromoButtonStyle : promoButtonStyle}
+              >
                 Apply
               </button>
             </div>
@@ -198,33 +212,33 @@ export default function CartDrawer() {
               <p style={promoErrorStyle}>{userCart.promoError}</p>
             )}
           </div>
-            <div className="cart-footer-summary" style={footerSummaryStyle}>
-              <div style={summaryRowStyle}>
-                <span>Subtotal</span>
-                <span>${subtotal.toFixed(2)}</span>
-              </div>
 
-              <div style={summaryRowStyle}>
-                <span>Tax</span>
-                <span>${tax.toFixed(2)}</span>
-              </div>
-
-              <div style={summaryRowStyle}>
-                <span>Discount</span>
-                <span>- ${discount.toFixed(2)}</span>
-              </div>
-
-              <div style={totalRowStyle}>
-                <span>Estimated total</span>
-                <span>${total.toFixed(2)}</span>
-              </div>
-
-              <button onClick={handleCheckout} style={checkoutButtonStyle}>
-                Continue to checkout
-              </button>
+          <div className="cart-footer-summary" style={footerSummaryStyle}>
+            <div style={summaryRowStyle}>
+              <span>Subtotal</span>
+              <span>${subtotal.toFixed(2)}</span>
             </div>
+
+            <div style={summaryRowStyle}>
+              <span>Tax</span>
+              <span>${tax.toFixed(2)}</span>
+            </div>
+
+            <div style={summaryRowStyle}>
+              <span>Discount</span>
+              <span>- ${discount.toFixed(2)}</span>
+            </div>
+
+            <div style={totalRowStyle}>
+              <span>Estimated total</span>
+              <span>${total.toFixed(2)}</span>
+            </div>
+
+            <button onClick={handleCheckout} style={checkoutButtonStyle}>
+              Continue to checkout
+            </button>
           </div>
-        )}
+        </div>
       </aside>
     </>
   );
@@ -273,6 +287,7 @@ const closeButtonStyle = {
 
 const emptyStyle = {
   padding: "24px",
+  backgroundColor: "#fff",
 };
 
 const contentStyle = {
@@ -346,7 +361,6 @@ const itemBottomRowStyle = {
   justifyContent: "space-between",
   alignItems: "center",
   gap: "12px",
-  //marginTop: "38px",
 };
 
 const qtyBoxStyle = {
@@ -457,6 +471,13 @@ const promoButtonStyle = {
   cursor: "pointer",
   fontWeight: "600",
   whiteSpace: "nowrap",
+};
+
+const disabledPromoButtonStyle = {
+  ...promoButtonStyle,
+  backgroundColor: "#e5e7eb",
+  color: "#9ca3af",
+  cursor: "not-allowed",
 };
 
 const promoSuccessStyle = {

@@ -36,11 +36,15 @@ export default function CheckoutPage() {
     0
   );
 
+  const isCartEmpty = userCart.items.length === 0;
+
   const { subtotal, discount, tax, total } = calculateCartTotals(userCart);
 
   const navigate = useNavigate();
 
   const handleApplyPromo = () => {
+    if (isCartEmpty) return;
+
     dispatch(applyPromoCode({ username, code: promoInput }));
   };
 
@@ -128,7 +132,11 @@ export default function CheckoutPage() {
               onChange={(e) => setPromoInput(e.target.value)}
               style={promoInputStyle}
             />
-            <button onClick={handleApplyPromo} style={secondaryButtonStyle}>
+            <button
+              onClick={handleApplyPromo}
+              disabled={isCartEmpty}
+              style={isCartEmpty ? disabledButtonStyle : secondaryButtonStyle}
+            >
               Apply
             </button>
           </div>
@@ -269,6 +277,13 @@ const secondaryButtonStyle = {
   borderRadius: "6px",
   backgroundColor: "#fff",
   cursor: "pointer",
+};
+
+const disabledButtonStyle = {
+  ...secondaryButtonStyle,
+  color: "#9ca3af",
+  backgroundColor: "#e5e7eb",
+  cursor: "not-allowed",
 };
 
 const clearButtonStyle = {
