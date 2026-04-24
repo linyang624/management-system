@@ -1,20 +1,21 @@
 import { Link } from "react-router-dom";
 import { colors } from "../../styles/theme";
 import { FaYoutube, FaTwitter, FaFacebookSquare } from "react-icons/fa";
+import "../../responsive/Footer.css";
 
 // Bottom footer section
 // Shows copyright + social links + quick links
 export default function Footer() {
   return (
-    <footer style={footerWrapperStyle}>
-      <div style={footerInnerStyle}>
+    <footer className="footer-wrapper" style={footerWrapperStyle}>
+      <div className="footer-inner" style={footerInnerStyle}>
         {/* Left section */}
-        <div style={{footerSectionStyle, justifyContent: "flex-start"}}>
+        <div className="footer-section footer-left" style={{...footerSectionStyle, justifyContent: "flex-start"}}>
           <span style={footerTextStyle}>©2022 All Rights Reserved.</span>
         </div>
 
         {/* Middle section */}
-        <div style={{ ...footerSectionStyle, justifyContent: "center" }}>
+        <div className="footer-section footer-social-section" style={{ ...footerSectionStyle, justifyContent: "center" }}>
           <div style={socialListStyle}>
             <a href="/" style={socialLinkStyle} aria-label="YouTube">
               <FaYoutube />
@@ -29,7 +30,7 @@ export default function Footer() {
         </div>
 
         {/* Right section */}
-        <div style={{ ...footerSectionStyle, justifyContent: "flex-end" }}>
+        <div className="footer-section footer-right" style={{ ...footerSectionStyle, justifyContent: "flex-end" }}>
           <div style={footerLinkGroupStyle}>
             <Link to="/" style={footerLinkStyle}>
               Contact us
@@ -60,7 +61,7 @@ const footerWrapperStyle = {
 };
 
 const footerInnerStyle = {
-  Width: "100%",
+  width: "100%",
   margin: "0 auto",
   display: "flex",
   alignItems: "center",

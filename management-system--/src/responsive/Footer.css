@@ -1,0 +1,60 @@
+/* Footer responsive layout */
+
+.footer-section {
+  flex: 1;
+}
+
+.footer-left {
+  order: 1;
+}
+
+.footer-social-section {
+  order: 2;
+}
+
+.footer-right {
+  order: 3;
+}
+
+/* Phone */
+@media (max-width: 768px) {
+  .footer-wrapper {
+    padding: 32px 24px !important;
+  }
+
+  .footer-inner {
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 24px !important;
+  }
+
+  .footer-section {
+    width: 100% !important;
+    justify-content: center !important;
+    flex: none !important;
+  }
+
+  .footer-social-section {
+    order: 1;
+  }
+
+  .footer-right {
+    order: 2;
+  }
+
+  .footer-left {
+    order: 3;
+  }
+}
+
+/* Small phone */
+@media (max-width: 430px) {
+  .footer-wrapper {
+    padding: 28px 18px !important;
+  }
+
+  .footer-inner {
+    gap: 20px !important;
+  }
+}
