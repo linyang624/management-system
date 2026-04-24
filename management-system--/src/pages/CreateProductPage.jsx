@@ -8,6 +8,7 @@ import {
 } from "../api/productApi";
 import { useDispatch, useSelector } from "react-redux";
 import { removeProductFromAllCarts } from "../features/cart/cartSlice";
+import { FiImage } from "react-icons/fi";
 
 
 export default function CreateProductPage() {
@@ -73,10 +74,11 @@ export default function CreateProductPage() {
       ...prev,
       [name]: value,
     }));
+  };
 
-    if (name === "imageLink") {
-      setPreviewImage(value);
-    }
+  //preiew button
+  const handlePreviewImage = () => {
+    setPreviewImage(formData.imageLink.trim());
   };
 
   const handleImageUpload = (e) => {
@@ -169,30 +171,20 @@ export default function CreateProductPage() {
   }
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2 style={{ textAlign: "center", marginBottom: "24px" }}>
-        {isEditMode ? "Edit Product" : "Create Product"}
+    <div style={ pageContainerStyle} >
+    <div style={formWrapperStyle}>
+      <h2 style={ pageTitleStyle }>
+        {isEditMode ? "Edit Product" : "Add Product"}
       </h2>
 
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          maxWidth: "500px",
-          margin: "0 auto",
-          backgroundColor: "#fff",
-          padding: "24px",
-          borderRadius: "8px",
-          boxShadow: "0 0 8px rgba(0, 0, 0, 0.08)",
-        }}
-      >
+      <form onSubmit={handleSubmit} style={formCardStyle}>
+
         {pageError && (
           <p style={{ color: "red", marginBottom: "16px" }}>{pageError}</p>
         )}
 
         <div style={{ marginBottom: "16px" }}>
-          <label style={{ display: "block", marginBottom: "6px" }}>
-            Product name
-          </label>
+          <label style={labelStyle}>Product name</label>
           <input
             type="text"
             name="name"
@@ -205,9 +197,9 @@ export default function CreateProductPage() {
         </div>
 
         <div style={{ marginBottom: "16px" }}>
-          <label style={{ display: "block", marginBottom: "6px" }}>
-            Product Description
-          </label>
+          <label style={labelStyle}>
+                Product Description
+           </label>
           <textarea
             name="description"
             value={formData.description}
@@ -221,8 +213,8 @@ export default function CreateProductPage() {
 
         <div style={twoColumnWrapperStyle}>
           <div style={{ flex: 1 }}>
-            <label style={{ display: "block", marginBottom: "6px" }}>
-              Category
+            <label style={labelStyle}>
+                Category
             </label>
             <select
               name="category"
@@ -237,7 +229,7 @@ export default function CreateProductPage() {
           </div>
 
           <div style={{ flex: 1 }}>
-            <label style={{ display: "block", marginBottom: "6px" }}>
+            <label style={labelStyle}>
               Price
             </label>
             <input
@@ -256,7 +248,7 @@ export default function CreateProductPage() {
 
         <div style={twoColumnWrapperStyle}>
           <div style={{ flex: 1 }}>
-            <label style={{ display: "block", marginBottom: "6px" }}>
+            <label style={labelStyle}>
               In Stock Quantity
             </label>
             <input
@@ -272,17 +264,26 @@ export default function CreateProductPage() {
           </div>
 
           <div style={{ flex: 1 }}>
-            <label style={{ display: "block", marginBottom: "6px" }}>
+            <label style={labelStyle}>
               Add Image Link
             </label>
-            <input
-              type="text"
-              name="imageLink"
-              value={formData.imageLink}
-              onChange={handleChange}
-              placeholder="http://"
-              style={inputStyle}
-            />
+            <div style={imageLinkRowStyle}>
+                <input
+                    type="text"
+                    name="imageLink"
+                    value={formData.imageLink}
+                    onChange={handleChange}
+                    placeholder="http://"
+                    style={imageLinkInputStyle}
+                />
+                <button
+                    type="button"
+                    onClick={handlePreviewImage}
+                    style={previewButtonStyle}
+                >
+                    Preview
+                </button>
+            </div>
           </div>
         </div>
 {/* 
@@ -299,7 +300,7 @@ export default function CreateProductPage() {
           />
         </div> */}
 
-        <div
+       {/* <div
           style={{
             marginBottom: "20px",
             border: "1px dashed #ccc",
@@ -324,28 +325,37 @@ export default function CreateProductPage() {
             />
           ) : (
             <span style={{ color: "#888" }}>image preview!</span>
-          )}
+          )} 
+        </div> */}
+
+        <div style={previewOuterStyle}>
+            {previewImage ? (
+                <img
+                    src={previewImage}
+                    alt="Preview"
+                    style={previewImageStyle}
+                 />
+            ) : (
+            <div style={previewPlaceholderStyle}>
+                <FiImage style={previewIconStyle} />
+                <span style={previewTextStyle}>image preview!</span>
+            </div>
+            )}
         </div>
 
-        <div
+        {/* <div
           style={{
             display: "flex",
             gap: "12px",
             alignItems: "center",
             flexWrap: "wrap",
           }}
-        >
+        > */}
+        <div style={buttonRowStyle}>
           <button
             type="submit"
             disabled={submitting}
-            style={{
-              padding: "10px 18px",
-              backgroundColor: "#5a54f9",
-              color: "#fff",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
+            style={submitButtonStyle}
           >
             {submitting
               ? "Saving..."
@@ -373,6 +383,7 @@ export default function CreateProductPage() {
           )}
         </div>
       </form>
+      </div>
     </div>
   );
 }
@@ -383,6 +394,7 @@ const inputStyle = {
   border: "1px solid #ccc",
   borderRadius: "4px",
   boxSizing: "border-box",
+  fontFamily: "Arial, sans-serif",
 };
 
 const twoColumnWrapperStyle = {
@@ -390,4 +402,143 @@ const twoColumnWrapperStyle = {
   gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
   gap: "16px",
   marginBottom: "16px",
+};
+
+const pageContainerStyle = {
+  maxWidth: "1320px",
+  margin: "0 auto",
+  padding: "48px 32px 28px",
+  fontFamily: "Arial, sans-serif",
+  boxSizing: "border-box",
+};
+
+const pageTitleStyle = {
+  fontSize: "28px",
+  margin: "0 0 32px 0",
+  fontWeight: "700",
+  color: "#111827",
+  fontFamily: "Arial, sans-serif",
+};
+
+const formCardStyle = {
+  width: "100%",
+  maxWidth: "620px",
+  backgroundColor: "#fff",
+  padding: "32px 48px",
+  borderRadius: "0",
+  boxShadow: "none",
+  boxSizing: "border-box",
+};
+
+const labelStyle = {
+  display: "block",
+  marginBottom: "8px",
+  color: "#6b7280",
+  fontSize: "14px",
+  fontWeight: "500",
+  fontFamily: "Arial, sans-serif",
+};
+
+const formWrapperStyle = {
+  width: "100%",
+  maxWidth: "620px",
+  margin: "0 auto",
+};
+
+const previewOuterStyle = {
+  width: "70%",
+  height: "180px",
+  margin: "20px auto 24px",
+  border: "1px dashed #cfcfcf",
+  backgroundColor: "#fff",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  overflow: "hidden",
+  boxSizing: "border-box",
+};
+
+const previewPlaceholderStyle = {
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: "10px",
+  color: "#6b7280",
+  fontFamily: "Arial, sans-serif",
+};
+
+const previewIconStyle = {
+  width: "34px",
+  height: "34px",
+  color: "#d1d5db",
+};
+
+const previewTextStyle = {
+  fontSize: "14px",
+  fontWeight: "500",
+  color: "#6b7280",
+};
+
+const previewImageStyle = {
+  width: "100%",
+  height: "100%",
+  objectFit: "contain",
+};
+
+const buttonRowStyle = {
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  gap: "12px",
+  flexWrap: "wrap",
+};
+
+const submitButtonStyle = {
+  width: "120px",
+  height: "38px",
+  backgroundColor: "#4f46e5",
+  color: "#fff",
+  border: "none",
+  borderRadius: "3px",
+  cursor: "pointer",
+  fontSize: "13px",
+  fontWeight: "500",
+  fontFamily: "Arial, sans-serif",
+};
+
+const imageLinkRowStyle = {
+  display: "flex",
+  alignItems: "center",
+  width: "100%",
+  border: "1px solid #ccc",
+  borderRadius: "4px",
+  boxSizing: "border-box",
+  overflow: "hidden",
+  backgroundColor: "#fff",
+};
+
+const imageLinkInputStyle = {
+  flex: 1,
+  height: "40px",
+  padding: "10px",
+  border: "none",
+  outline: "none",
+  fontSize: "14px",
+  fontFamily: "Arial, sans-serif",
+  boxSizing: "border-box",
+};
+
+const previewButtonStyle = {
+  width: "68px",
+  height: "32px",
+  marginRight: "8px",
+  border: "none",
+  borderRadius: "4px",
+  backgroundColor: "#4f46e5",
+  color: "#fff",
+  cursor: "pointer",
+  fontSize: "12px",
+  fontWeight: "500",
+  fontFamily: "Arial, sans-serif",
 };
