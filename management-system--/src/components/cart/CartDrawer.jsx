@@ -10,6 +10,7 @@ import {
 } from "../../features/cart/cartSlice";
 import { calculateCartTotals } from "../../utils/cartUtils";
 import { useState, useEffect } from "react";
+import "../../responsive/CartDrawer.css";
 
 
 export default function CartDrawer() {
@@ -65,8 +66,8 @@ export default function CartDrawer() {
     <>
       <div onClick={handleClose} style={overlayStyle} />
 
-      <aside style={drawerStyle}>
-        <div style={headerStyle}>
+      <aside className="cart-drawer" style={drawerStyle}>
+        <div className="cart-header" style={headerStyle}>
           <h2 style={{ margin: 0, color: "#fff" }}>
             Cart{" "}
             <span style={{ fontSize: "16px", fontWeight: "normal" }}>
@@ -86,10 +87,11 @@ export default function CartDrawer() {
         ) : (
           <div style={contentStyle}>
             {/* Scrollable item list */}
-            <div style={itemsScrollStyle}>
+            <div className="cart-items-scroll" style={itemsScrollStyle}>
               {userCart.items.map((item) => (
-                <div key={item.id} style={itemCardStyle}>
+                <div key={item.id} className="cart-item-card" style={itemCardStyle}>
                   <img
+                    className="cart-item-image"
                     src={item.image}
                     alt={item.name}
                     style={{ ...imageStyle, cursor: "pointer" }}
@@ -100,24 +102,25 @@ export default function CartDrawer() {
                   />
 
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={itemTopRowStyle}>
+                    <div className="cart-item-top-row" style={itemTopRowStyle}>
                       <h4
+                        className="cart-item-name"
                         style={{
                           ...itemNameStyle,
                           cursor: "pointer",
-                          textDecoration: "underline",
+                          textDecoration: "none",
                         }}
                         onClick={() => handleGoToProduct(item.id)}
                       >
                         {item.name}
                       </h4>
 
-                      <p style={itemPriceStyle}>
+                      <p className="cart-item-price" style={itemPriceStyle}>
                         ${Number(item.price).toFixed(2)}
                       </p>
                     </div>
 
-                    <div style={itemBottomRowStyle}>
+                    <div className="cart-item-bottom-row" style={itemBottomRowStyle}>
                       <div style={qtyBoxStyle}>
                         <button
                           onClick={() =>
@@ -170,10 +173,10 @@ export default function CartDrawer() {
             </div>
 
             {/* Fixed summary + checkout button */}
-            <div style={promoSectionStyle}>
+            <div className="cart-promo-section" style={promoSectionStyle}>
             <label style={promoLabelStyle}>Apply Discount Code</label>
 
-            <div style={promoRowStyle}>
+            <div className="cart-promo-row" style={promoRowStyle}>
               <input
                 type="text"
                 placeholder="20 DOLLAR OFF"
@@ -195,7 +198,7 @@ export default function CartDrawer() {
               <p style={promoErrorStyle}>{userCart.promoError}</p>
             )}
           </div>
-            <div style={footerSummaryStyle}>
+            <div className="cart-footer-summary" style={footerSummaryStyle}>
               <div style={summaryRowStyle}>
                 <span>Subtotal</span>
                 <span>${subtotal.toFixed(2)}</span>
@@ -334,6 +337,7 @@ const itemBottomRowStyle = {
   justifyContent: "space-between",
   alignItems: "center",
   gap: "12px",
+  marginTop: "38px",
 };
 
 const qtyBoxStyle = {
@@ -341,13 +345,13 @@ const qtyBoxStyle = {
   alignItems: "center",
   width: "fit-content",
   border: "1px solid #d1d5db",
-  borderRadius: "6px",
+  borderRadius: "4px",
   overflow: "hidden",
 };
 
 const qtyButtonStyle = {
-  width: "36px",
-  height: "36px",
+  width: "22px",
+  height: "22px",
   border: "none",
   backgroundColor: "#f9fafb",
   cursor: "pointer",
@@ -355,9 +359,12 @@ const qtyButtonStyle = {
 };
 
 const qtyTextStyle = {
-  width: "40px",
+  width: "24px",
+  height: "20px",
+  lineHeight: "20px",
   textAlign: "center",
-  fontWeight: "600",
+  fontWeight: "500",
+  fontSize: "13px",
 };
 
 const removeButtonStyle = {
@@ -366,6 +373,8 @@ const removeButtonStyle = {
   color: "#6b7280",
   cursor: "pointer",
   fontSize: "13px",
+  textDecoration: "underline",
+  fontFamily: "Arial, sans-serif",
 };
 
 const summaryRowStyle = {
