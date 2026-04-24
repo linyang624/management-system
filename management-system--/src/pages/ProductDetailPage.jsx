@@ -83,6 +83,10 @@ export default function ProductDetailPage() {
 
   // Add to cart
   const handleAddToCart = () => {
+    if (Number(product.stock) <= 0) {        
+        return;
+    }
+
     if (!isAuthenticated) {
       alert("Please sign in first.");
       navigate("/signin");
@@ -163,11 +167,18 @@ export default function ProductDetailPage() {
 
           <p style={descriptionStyle}>{product.description}</p>
 
-          <p style={stockTextStyle}>Stock: {product.stock}</p>
+          {/* <p style={stockTextStyle}>Stock: {product.stock}</p> */}
 
           <div style={actionRowStyle}>
             {!cartItem ? (
-              <button onClick={handleAddToCart} style={primaryButtonStyle}>
+              <button 
+                onClick={handleAddToCart} 
+                disabled={Number(product.stock) <= 0}
+                style={{
+                    ...primaryButtonStyle,
+                    ...(Number(product.stock) <= 0 ? disabledPrimaryButtonStyle : {}),
+                }}
+                >
                 Add to Cart
               </button>
             ) : (
@@ -201,14 +212,19 @@ export default function ProductDetailPage() {
 ======================= */
 
 const pageContainerStyle = {
-  maxWidth: "1200px",
+  maxWidth: "1320px",
   margin: "0 auto",
-  padding: "32px 24px",
+  padding: "48px 32px 28px",
+  fontFamily: "Arial, sans-serif",
+  boxSizing: "border-box",
 };
 
 const pageTitleStyle = {
-  fontSize: "32px",
-  margin: "0 0 24px 0",
+  fontSize: "28px",
+  margin: "0 0 32px 0",
+  fontWeight: "700",
+  color: "#111827",
+  fontFamily: "Arial, sans-serif",
 };
 
 const statusTextStyle = {
@@ -217,12 +233,12 @@ const statusTextStyle = {
 
 const detailCardStyle = {
   backgroundColor: "#fff",
-  borderRadius: "10px",
-  padding: "32px",
+  borderRadius: "0",
+  padding: "36px 40px",
   display: "grid",
-  gridTemplateColumns: "minmax(300px, 1.4fr) minmax(280px, 1fr)",
-  gap: "48px",
-  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.06)",
+  gridTemplateColumns: "minmax(520px, 1.25fr) minmax(360px, 0.9fr)",
+  gap: "56px",
+  boxSizing: "border-box",
 };
 
 const imageSectionStyle = {
@@ -233,15 +249,16 @@ const imageSectionStyle = {
 
 const imageStyle = {
   width: "100%",
-  height: "460px",
+  height: "560px",
   objectFit: "cover",
-  borderRadius: "8px",
+  borderRadius: "0",
 };
 
 const infoSectionStyle = {
   display: "flex",
   flexDirection: "column",
   justifyContent: "center",
+  paddingRight: "32px",
 };
 
 const categoryStyle = {
@@ -254,6 +271,9 @@ const productNameStyle = {
   margin: "0 0 16px 0",
   fontSize: "32px",
   lineHeight: 1.2,
+  color: "#3f3f46ec",
+  fontWeight: "700",
+  fontFamily: "Arial, sans-serif",
 };
 
 const priceRowStyle = {
@@ -283,59 +303,86 @@ const descriptionStyle = {
   fontSize: "15px",
 };
 
-const stockTextStyle = {
-  margin: "0 0 24px 0",
-  color: "#374151",
-  fontSize: "14px",
-};
+// const stockTextStyle = {
+//   margin: "0 0 24px 0",
+//   color: "#374151",
+//   fontSize: "14px",
+// };
 
 const actionRowStyle = {
   display: "flex",
   alignItems: "center",
-  gap: "14px",
+  gap: "18px",
   flexWrap: "wrap",
 };
 
 const primaryButtonStyle = {
-  padding: "12px 22px",
-  backgroundColor: "#6366f1",
+  width: "120px",
+  height: "40px",
+  padding: 0,
+  backgroundColor: "#4f46e5",
   color: "#fff",
-  border: "none",
-  borderRadius: "6px",
+  border: "1px solid #4f46e5",
+  borderRadius: "4px",
   cursor: "pointer",
-  fontSize: "15px",
-  fontWeight: "600",
+  fontSize: "13px",
+  fontWeight: "700",
+  fontFamily: "Arial, sans-serif",
+  boxSizing: "border-box",
 };
 
 const secondaryButtonStyle = {
-  padding: "12px 22px",
+  width: "120px",
+  height: "40px",
+  padding: 0,
   backgroundColor: "#fff",
   color: "#374151",
   border: "1px solid #d1d5db",
-  borderRadius: "6px",
+  borderRadius: "4px",
   cursor: "pointer",
-  fontSize: "15px",
+  fontSize: "13px",
+  fontWeight: "500",
+  fontFamily: "Arial, sans-serif",
+  boxSizing: "border-box",
 };
 
 const qtyContainerStyle = {
+  width: "120px",
   display: "flex",
   alignItems: "center",
-  border: "1px solid #d1d5db",
-  borderRadius: "6px",
+  height: "40px",
+  backgroundColor: "#4f46e5",
+  borderRadius: "4px",
   overflow: "hidden",
 };
 
 const qtyButtonStyle = {
-  width: "40px",
+  flex: 1,
   height: "40px",
-  border: "none",
-  backgroundColor: "#f9fafb",
+  border: "1px solid #4f46e5",
+  backgroundColor: "#4f46e5",
+  color: "#fff",
   cursor: "pointer",
-  fontSize: "16px",
+  fontSize: "14px",
+  fontWeight: "500",
+  fontFamily: "Arial, sans-serif",
+  boxSizing: "border-box",
 };
 
 const qtyTextStyle = {
-  width: "44px",
+  flex: 1,
+  height: "40px",
+  lineHeight: "40px",
   textAlign: "center",
-  fontWeight: "600",
+  backgroundColor: "#4f46e5",
+  color: "#fff",
+  fontSize: "13px",
+  fontWeight: "500",
+  fontFamily: "Arial, sans-serif",
+};
+
+const disabledPrimaryButtonStyle = {
+  backgroundColor: "#9ca3af",
+  borderColor: "#9ca3af",
+  cursor: "not-allowed",
 };
