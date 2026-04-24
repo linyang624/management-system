@@ -475,6 +475,13 @@ const styles = {
         fontFamily: "Arial, sans-serif",
         textAlign: "center",
     },
+    signupFooter: {
+        display: "flex",
+        alignItems: "center",
+        gap: "4px",
+        marginTop: "18px",
+        flexWrap: "wrap",
+},
 };
 
 export default AuthForm;

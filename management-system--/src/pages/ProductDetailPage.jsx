@@ -7,6 +7,7 @@ import {
   decreaseQuantity,
 } from "../features/cart/cartSlice";
 import { getProductByIdApi } from "../api/productApi";
+import "../responsive/ProductDetailPage.css";
 
 // Shared product detail page for both customer and admin
 export default function ProductDetailPage() {
@@ -140,17 +141,17 @@ export default function ProductDetailPage() {
   }
 
   return (
-    <div style={pageContainerStyle}>
-      <h2 style={pageTitleStyle}>Products Detail</h2>
+    <div className="product-detail-card" style={pageContainerStyle}>
+      <h2 className="product-detail-title" style={pageTitleStyle}>Products Detail</h2>
 
-      <div style={detailCardStyle}>
-        <div style={imageSectionStyle}>
+      <div className="product-detail-card" style={detailCardStyle}>
+        <div className="product-detail-image-section" style={imageSectionStyle}>
           {product.image && (
-            <img src={product.image} alt={product.name} style={imageStyle} />
+            <img className="product-detail-image" src={product.image} alt={product.name} style={imageStyle} />
           )}
         </div>
 
-        <div style={infoSectionStyle}>
+        <div className="product-detail-info" style={infoSectionStyle}>
           <p style={categoryStyle}>{product.category}</p>
 
           <h1 style={productNameStyle}>{product.name}</h1>
@@ -169,7 +170,7 @@ export default function ProductDetailPage() {
 
           {/* <p style={stockTextStyle}>Stock: {product.stock}</p> */}
 
-          <div style={actionRowStyle}>
+          <div className="product-detail-actions" style={actionRowStyle}>
             {!cartItem ? (
               <button 
                 onClick={handleAddToCart} 

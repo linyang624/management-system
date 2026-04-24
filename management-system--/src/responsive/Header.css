@@ -49,9 +49,9 @@
     gap: 28px !important;
   }
 
-  .header-logout-button {
+  /*.header-logout-button {
     display: none !important;
-  }
+  } */
 
   .header-search {
     order: 4;
