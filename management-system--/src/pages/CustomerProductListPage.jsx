@@ -242,6 +242,8 @@ export default function CustomerProductListPage() {
               const cartItem = userCart.items.find(
                 (item) => item.id === product.id
               );
+              const reachedStockLimit =
+              cartItem && cartItem.quantity >= Number(product.stock);
 
               return (
                 <div style={cardActionRowStyle}>
@@ -265,7 +267,12 @@ export default function CustomerProductListPage() {
 
                       <button
                         onClick={() => handleIncreaseQuantity(product.id)}
-                        style={qtyButtonStyle}
+                        disabled={reachedStockLimit}
+                        style={
+                          reachedStockLimit
+                            ? disabledQtyButtonStyle
+                            : qtyButtonStyle
+                        }
                       >
                         +
                       </button>
@@ -388,38 +395,34 @@ const primaryButtonStyle = {
 // };
 
 const qtyContainerStyle = {
-  width: "100%",
   display: "flex",
   alignItems: "center",
-  height: "34px",
-  backgroundColor: "#4f46e5",
-  borderRadius: "4px",
+  border: "1px solid #d1d5db",
+  borderRadius: "6px",
   overflow: "hidden",
+  height: "34px",
 };
 
 const qtyButtonStyle = {
-  flex: 1,
-  height: "34px",
-  border: "1px solid #4f46e5",
-  backgroundColor: "#4f46e5",
-  color: "#fff",
+  width: "32px",
+  height: "100%",
+  border: "none",
+  backgroundColor: "#f3f4f6",
   cursor: "pointer",
-  fontSize: "13px",
-  fontWeight: "500",
-  fontFamily: "Arial, sans-serif",
-  boxSizing: "border-box",
 };
 
 const qtyTextStyle = {
-  flex: 1,
-  height: "34px",
-  lineHeight: "34px",
+  width: "40px",
   textAlign: "center",
-  backgroundColor: "#4f46e5",
-  color: "#fff",
-  fontSize: "12px",
-  fontWeight: "500",
-  fontFamily: "Arial, sans-serif",
+  fontWeight: "600",
+};
+
+const disabledQtyButtonStyle = {
+  ...qtyButtonStyle,
+  backgroundColor: "#e5e7eb",
+  border: "1px solid #d1d5db",
+  color: "#9ca3af",
+  cursor: "not-allowed",
 };
 
 const topRowStyle = {
