@@ -101,7 +101,7 @@ export default function CartDrawer() {
                     }}
                   />
 
-                  <div style={{ flex: 1, minWidth: 0 }}>
+                  <div className="cart-item-info" style={itemInfoStyle}>
                     <div className="cart-item-top-row" style={itemTopRowStyle}>
                       <h4
                         className="cart-item-name"
@@ -311,12 +311,21 @@ const imageStyle = {
   backgroundColor: "#f3f4f6",
 };
 
+const itemInfoStyle = {
+  flex: 1,
+  minWidth: 0,
+  height: "82px",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-between",
+};
+
 const itemTopRowStyle = {
   display: "flex",
   justifyContent: "space-between",
   gap: "12px",
   alignItems: "flex-start",
-  marginBottom: "14px",
+  marginBottom: 0,
 };
 
 const itemNameStyle = {
@@ -337,7 +346,7 @@ const itemBottomRowStyle = {
   justifyContent: "space-between",
   alignItems: "center",
   gap: "12px",
-  marginTop: "38px",
+  //marginTop: "38px",
 };
 
 const qtyBoxStyle = {
@@ -406,6 +415,7 @@ const checkoutButtonStyle = {
 };
 
 const promoSectionStyle = {
+  marginTop: "20px",
   marginBottom: "18px",
   padding: "0 24px",
   width: "100%",

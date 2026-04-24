@@ -237,7 +237,8 @@ const imageStyle = {
   width: "100px",
   height: "100px",
   objectFit: "cover",
-  borderRadius: "8px",
+  borderRadius: "0",
+  flexShrink: 0,
   cursor: "pointer",
 };
 
