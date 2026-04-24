@@ -5,7 +5,8 @@ import { openCartDrawer, closeCartDrawer } from "../../features/cart/cartSlice";
 import { logOut, clearAuthMessage } from "../../features/auth/authSlice";
 import { calculateCartTotals } from "../../utils/cartUtils";
 import { colors } from "../../styles/theme";
-//import { FiSearch, FiShoppingCart, FiUser } from "react-icons/fi";
+import { FiSearch, FiShoppingCart, FiUser } from "react-icons/fi";
+import { FaStar } from "react-icons/fa";
 
 // Top navigation bar
 // Shows total cart value + toggle drawer
@@ -20,6 +21,19 @@ export default function Header() {
 
   // Header search keyword
   const [keyword, setKeyword] = useState("");
+
+  // Responsive with Mobile
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+        setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => {
+        window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   // Keep header input in sync with URL keyword
   useEffect(() => {
@@ -38,6 +52,9 @@ export default function Header() {
 
   // Calculate total price
   const { total } = calculateCartTotals(userCart);
+
+  // Show the total products number amount in cart
+  const cartItemCount = userCart.items.reduce((sum, item) => sum + item.quantity, 0);
 
   // Toggle cart drawer open/close
   const handleCartClick = () => {
@@ -84,7 +101,8 @@ export default function Header() {
       <div style={headerInnerStyle}>
         {/* Brand / Logo */}
         <Link to={homePath} style={brandStyle}>
-          Management Chuwa
+          <span style={isMobile ? brandMobileMainStyle : brandMainStyle}>{isMobile ? "M" : "Management"}</span>
+          <span style={brandSubStyle}>Chuwa</span>
         </Link>
 
         {/* Search bar */}
@@ -96,23 +114,38 @@ export default function Header() {
             onChange={handleSearchChange}
             style={searchInputStyle}
           />
+          <FiSearch style={searchIconStyle} />
         </div>
 
         {/* Right side actions */}
         <div style={headerActionsStyle}>
           {!isAuthenticated ? (
-            <Link to="/signin" style={linkButtonStyle}>
+            <Link to="/signin" style={signInLinkStyle}>
+              <FiUser style={userIconStyle} />
               Sign In
             </Link>
           ) : (
             <>
-              <button onClick={handleCartClick} style={headerButtonStyle}>
-                Cart ${total.toFixed(2)}
+              <div style={userStatusStyle}>
+                <div style={userIconWrapperStyle}>
+                    <FiUser style={userIconStyle} />
+                    <FaStar style={starIconStyle} />
+                </div>
+
+                <button onClick={handleLogOut} style={logoutButtonStyle}>
+                    Sign Out
+                </button>
+              </div>
+              
+                <button onClick={handleCartClick} style={cartButtonStyle}>
+                    <div style={cartIconWrapperStyle}>
+                        <FiShoppingCart style={cartIconStyle} />
+                        {cartItemCount > 0 && (<span style={cartBadgeStyle}>{cartItemCount}</span>)}
+                    </div>                    
+                    <span>${total.toFixed(2)}</span>
               </button>
-              <button onClick={handleLogOut} style={headerButtonStyle}>
-                Sign Out
-              </button>
-            </>
+
+            </>            
           )}
         </div>
       </div>
@@ -128,10 +161,11 @@ const headerWrapperStyle = {
   backgroundColor: colors.headerBg,
   color: "#fff",
   padding: "16px 24px",
+  fontFamily: "Arial, Helvetica, sans-serif",
 };
 
 const headerInnerStyle = {
-  maxWidth: "1200px",
+  maxWidth: "90%",
   margin: "0 auto",
   display: "flex",
   alignItems: "center",
@@ -143,47 +177,180 @@ const headerInnerStyle = {
 const brandStyle = {
   color: "#fff",
   textDecoration: "none",
+  //fontSize: "32px",
+  //fontWeight: "700",
+  whiteSpace: "nowrap",
+  fontFamily: "Arial, Helvetica, sans-serif",
+  display: "flex",
+  alignItems: "baseline",
+  gap: "3px",
+};
+
+const brandMainStyle = {
   fontSize: "32px",
   fontWeight: "700",
-  whiteSpace: "nowrap",
+  lineHeight: "1",
+};
+
+const brandSubStyle = {
+  fontSize: "14px",
+  fontWeight: "500",
+  lineHeight: "1",
+};
+
+const brandMobileMainStyle = {
+  fontSize: "30px",
+  fontWeight: "700",
+  lineHeight: "1",
 };
 
 const searchWrapperStyle = {
   flex: 1,
   minWidth: "260px",
   maxWidth: "520px",
+  position: "relative",
 };
 
 const searchInputStyle = {
   width: "100%",
-  padding: "12px 14px",
+  padding: "12px 14px 12px 14px",
   borderRadius: "6px",
   border: "1px solid #d1d5db",
   outline: "none",
   fontSize: "15px",
   boxSizing: "border-box",
+  fontFamily: "Arial, Helvetica, sans-serif",
+};
+
+const searchIconStyle = {
+  position: "absolute",
+  right: "14px",
+  top: "50%",
+  transform: "translateY(-50%)",
+  color: "#8a8a8a",
+  fontSize: "24px",
+  pointerEvents: "none",
 };
 
 const headerActionsStyle = {
   display: "flex",
   alignItems: "center",
-  gap: "12px",
-  flexWrap: "wrap",
+  justifyContent: "flex-end",
+  gap: "36px",
+  flexWrap: "nowrap",
+  minWidth: "280px",
 };
 
-const linkButtonStyle = {
+// const linkButtonStyle = {
+//   color: "#fff",
+//   textDecoration: "none",
+//   fontSize: "16px",
+//   fontWeight: "700",
+//   fontFamily: "Arial, Helvetica, sans-serif",
+// };
+
+// const headerButtonStyle = {
+//   backgroundColor: "transparent",
+//   border: "1px solid rgba(255, 255, 255, 0.35)",
+//   color: "#fff",
+//   borderRadius: "6px",
+//   padding: "10px 14px",
+//   cursor: "pointer",
+//   fontSize: "15px",
+// };
+
+const signInLinkStyle = {
   color: "#fff",
   textDecoration: "none",
   fontSize: "16px",
-  fontWeight: "500",
+  fontWeight: "700",
+  fontFamily: "Arial, Helvetica, sans-serif",
+  display: "flex",
+  alignItems: "center",
+  gap: "10px",
 };
 
-const headerButtonStyle = {
-  backgroundColor: "transparent",
-  border: "1px solid rgba(255, 255, 255, 0.35)",
+const userIconStyle = {
+  fontSize: "28px",
   color: "#fff",
-  borderRadius: "6px",
-  padding: "10px 14px",
+};
+
+const userStatusStyle = {
+  display: "flex",
+  alignItems: "center",
+  gap: "14px",
+};
+
+const userIconWrapperStyle = {
+  position: "relative",
+  width: "30px",
+  height: "30px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+};
+
+const starIconStyle = {
+  position: "absolute",
+  right: "-4px",
+  bottom: "-3px",
+  fontSize: "14px",
+  color: "#facc15",
+};
+
+const logoutButtonStyle = {
+  backgroundColor: "transparent",
+  border: "none",
+  color: "#fff",
   cursor: "pointer",
-  fontSize: "15px",
+  fontSize: "18px",
+  fontWeight: "500",
+  fontFamily: "Arial, Helvetica, sans-serif",
+  padding: 0,
+};
+
+const cartButtonStyle = {
+  backgroundColor: "transparent",
+  border: "none",
+  color: "#fff",
+  cursor: "pointer",
+  display: "flex",
+  alignItems: "center",
+  gap: "14px",
+  fontSize: "18px",
+  fontWeight: "500",
+  fontFamily: "Arial, Helvetica, sans-serif",
+  padding: 0,
+  whiteSpace: "nowrap",
+};
+
+const cartIconStyle = {
+  fontSize: "25px",
+  color: "#fff",
+};
+
+const cartIconWrapperStyle = {
+  position: "relative",
+  width: "34px",
+  height: "34px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+};
+
+const cartBadgeStyle = {
+  position: "absolute",
+  top: "-7px",
+  right: "-8px",
+  minWidth: "16px",
+  height: "16px",
+  padding: "0 4px",
+  borderRadius: "999px",
+  backgroundColor: "#ef4444",
+  color: "#fff",
+  fontSize: "11px",
+  fontWeight: "700",
+  lineHeight: "16px",
+  textAlign: "center",
+  fontFamily: "Arial, Helvetica, sans-serif",
 };
