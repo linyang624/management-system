@@ -80,12 +80,22 @@ const cartSlice = createSlice({
       const { username, product } = action.payload;
       const userCart = getUserCart(state, username);
 
+      const stock = Number(product.stock) || 0;
+
+      // Do not add if product is out of stock
+      if (stock <= 0) {
+        return;
+      }
+
       const existingItem = userCart.items.find(
         (item) => item.id === product.id
       );
 
       if (existingItem) {
-        existingItem.quantity += 1;
+        // Do not exceed stock
+        if (existingItem.quantity < stock) {
+          existingItem.quantity += 1;
+        }
       } else {
         userCart.items.push({ ...product, quantity: 1 });
       }
@@ -101,7 +111,12 @@ const cartSlice = createSlice({
       const item = userCart.items.find((item) => item.id === productId);
 
       if (item) {
-        item.quantity += 1;
+        const stock = Number(item.stock) || 0;
+
+        // Do not exceed stock
+        if (item.quantity < stock) {
+          item.quantity += 1;
+        }
       }
     },
 
