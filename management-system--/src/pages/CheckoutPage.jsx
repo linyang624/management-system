@@ -1,8 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
 import {
-  increaseQuantity,
-  decreaseQuantity,
-  removeFromCart,
   clearCart,
   applyPromoCode,
   clearPromoFeedback,
@@ -39,8 +36,7 @@ export default function CheckoutPage() {
     0
   );
 
-  const { subtotal, discount, tax, total } =
-    calculateCartTotals(userCart);
+  const { subtotal, discount, tax, total } = calculateCartTotals(userCart);
 
   const navigate = useNavigate();
 
@@ -61,14 +57,18 @@ export default function CheckoutPage() {
     <div className="checkout-page" style={pageContainerStyle}>
       <h2 className="checkout-title" style={pageTitleStyle}>Checkout</h2>
 
-      {userCart.items.length === 0 ? (
-        <p>Your cart is empty.</p>
-      ) : (
-        <div className="checkout-layout" style={layoutStyle}>
-          {/* LEFT: Items */}
-          <div>
-            {userCart.items.map((item) => (
-              <div key={item.id} className="checkout-item-card" style={itemCardStyle}>
+      <div className="checkout-layout" style={layoutStyle}>
+        {/* LEFT: Items */}
+        <div>
+          {userCart.items.length === 0 ? (
+            <div style={emptyCartStyle}>Your cart is empty.</div>
+          ) : (
+            userCart.items.map((item) => (
+              <div
+                key={item.id}
+                className="checkout-item-card"
+                style={itemCardStyle}
+              >
                 <img
                   className="checkout-item-image"
                   src={item.image}
@@ -89,115 +89,65 @@ export default function CheckoutPage() {
                     ${Number(item.price).toFixed(2)}
                   </p>
 
-                  <div style={qtyContainerStyle}>
-                    <button
-                      onClick={() =>
-                        dispatch(
-                          decreaseQuantity({
-                            username,
-                            productId: item.id,
-                          })
-                        )
-                      }
-                      style={qtyButtonStyle}
-                    >
-                      -
-                    </button>
-
-                    <span style={qtyTextStyle}>{item.quantity}</span>
-
-                    <button
-                      onClick={() =>
-                        dispatch(
-                          increaseQuantity({
-                            username,
-                            productId: item.id,
-                          })
-                        )
-                      }
-                      style={qtyButtonStyle}
-                    >
-                      +
-                    </button>
-                  </div>
-
-                  <button
-                    className="checkout-remove-button"
-                    onClick={() =>
-                      dispatch(
-                        removeFromCart({
-                          username,
-                          productId: item.id,
-                        })
-                      )
-                    }
-                    style={removeButtonStyle}
-                  >
-                    Remove
-                  </button>
+                  <p style={qtyTextOnlyStyle}>Qty: {item.quantity}</p>
                 </div>
               </div>
-            ))}
-          </div>
-
-          {/* RIGHT: Summary */}
-          <div className="checkout-summary-card" style={summaryCardStyle}>
-            <h3>Order Summary</h3>
-
-            <div style={summaryRowStyle}>
-              <span>Items ({itemCount})</span>
-              <span>${subtotal.toFixed(2)}</span>
-            </div>
-
-            <div style={summaryRowStyle}>
-              <span>Discount</span>
-              <span>-${discount.toFixed(2)}</span>
-            </div>
-
-            <div style={summaryRowStyle}>
-              <span>Tax</span>
-              <span>${tax.toFixed(2)}</span>
-            </div>
-
-            <div style={totalRowStyle}>
-              <span>Total</span>
-              <span>${total.toFixed(2)}</span>
-            </div>
-
-            <div className="checkout-promo-row" style={promoRowStyle}>
-              <input
-                type="text"
-                placeholder="Promo code"
-                value={promoInput}
-                onChange={(e) => setPromoInput(e.target.value)}
-                style={promoInputStyle}
-              />
-              <button
-                onClick={handleApplyPromo}
-                style={secondaryButtonStyle}
-              >
-                Apply
-              </button>
-            </div>
-
-            {userCart.promoMessage && (
-              <p style={{ color: "green" }}>{userCart.promoMessage}</p>
-            )}
-
-            {userCart.promoError && (
-              <p style={{ color: "red" }}>{userCart.promoError}</p>
-            )}
-
-            <button style={primaryButtonStyle}>
-              Place Order
-            </button>
-
-            <button onClick={handleClearCart} style={clearButtonStyle}>
-              Clear Cart
-            </button>
-          </div>
+            ))
+          )}
         </div>
-      )}
+
+        {/* RIGHT: Summary */}
+        <div className="checkout-summary-card" style={summaryCardStyle}>
+          <h3>Order Summary</h3>
+
+          <div style={summaryRowStyle}>
+            <span>Items ({itemCount})</span>
+            <span>${subtotal.toFixed(2)}</span>
+          </div>
+
+          <div style={summaryRowStyle}>
+            <span>Discount</span>
+            <span>-${discount.toFixed(2)}</span>
+          </div>
+
+          <div style={summaryRowStyle}>
+            <span>Tax</span>
+            <span>${tax.toFixed(2)}</span>
+          </div>
+
+          <div style={totalRowStyle}>
+            <span>Total</span>
+            <span>${total.toFixed(2)}</span>
+          </div>
+
+          <div className="checkout-promo-row" style={promoRowStyle}>
+            <input
+              type="text"
+              placeholder="Promo code"
+              value={promoInput}
+              onChange={(e) => setPromoInput(e.target.value)}
+              style={promoInputStyle}
+            />
+            <button onClick={handleApplyPromo} style={secondaryButtonStyle}>
+              Apply
+            </button>
+          </div>
+
+          {userCart.promoMessage && (
+            <p style={{ color: "green" }}>{userCart.promoMessage}</p>
+          )}
+
+          {userCart.promoError && (
+            <p style={{ color: "red" }}>{userCart.promoError}</p>
+          )}
+
+          <button style={primaryButtonStyle}>Place Order</button>
+
+          <button onClick={handleClearCart} style={clearButtonStyle}>
+            Clear Cart
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -221,6 +171,13 @@ const layoutStyle = {
   display: "grid",
   gridTemplateColumns: "2fr 1fr",
   gap: "40px",
+};
+
+const emptyCartStyle = {
+  padding: "20px",
+  border: "1px solid #e5e7eb",
+  borderRadius: "10px",
+  backgroundColor: "#fff",
 };
 
 const itemCardStyle = {
@@ -254,36 +211,10 @@ const priceStyle = {
   fontWeight: "600",
 };
 
-const qtyContainerStyle = {
-  display: "inline-flex",
-  alignItems: "center",
-  width: "fit-content",
-  border: "1px solid #d1d5db",
-  borderRadius: "6px",
-  overflow: "hidden",
-  marginBottom: "12px",
-};
-
-const qtyButtonStyle = {
-  width: "36px",
-  height: "36px",
-  border: "none",
-  backgroundColor: "#f9fafb",
-  cursor: "pointer",
-};
-
-const qtyTextStyle = {
-  width: "40px",
-  textAlign: "center",
-  fontWeight: "600",
-};
-
-const removeButtonStyle = {
-  background: "transparent",
-  marginLeft: "20px",
-  border: "none",
+const qtyTextOnlyStyle = {
+  margin: "8px 0 0 0",
+  fontSize: "14px",
   color: "#6b7280",
-  cursor: "pointer",
 };
 
 const summaryCardStyle = {
@@ -291,6 +222,7 @@ const summaryCardStyle = {
   border: "1px solid #e5e7eb",
   borderRadius: "10px",
   backgroundColor: "#fff",
+  alignSelf: "start",
 };
 
 const summaryRowStyle = {
