@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema(
    }   
 );
 
-//hash password before saving to database
+//pre-save hook: hash password before saving to database
 
 userSchema.pre('save', async function (next) {
    try{

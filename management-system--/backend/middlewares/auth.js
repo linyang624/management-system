@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { AuthError } from '../utils/error.js';
 
+//function: verifyToken && checkAdmin
 export const verifyToken = (req, res, next) => {
   const authHeader = req.header('Authorization');
 

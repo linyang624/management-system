@@ -160,6 +160,7 @@ export default function ProductDetailPage() {
             />
           )}
         </div>
+        
 
         <div className="product-detail-info" style={infoSectionStyle}>
           <p style={categoryStyle}>{product.category}</p>

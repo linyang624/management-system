@@ -95,10 +95,11 @@ export default function Header() {
 
     const trimmedValue = nextValue.trim();
 
+    const basePath = location.pathname.startsWith("/admin") ? "/admin/products" : "/products";
     if (trimmedValue) {
-      navigate(`/products?keyword=${encodeURIComponent(trimmedValue)}`);
+      navigate(`${basePath}?keyword=${encodeURIComponent(trimmedValue)}`);
     } else {
-      navigate("/products");
+      navigate(basePath);
     }
   };
 

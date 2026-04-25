@@ -1,5 +1,7 @@
 import { body } from 'express-validator';
 
+/* Defines validation rules for product creation and update, 
+so invalid product data will not enter the controller. */
 
 // create product
 export const createProductValidation = [

@@ -1,5 +1,7 @@
 import { body } from 'express-validator';
 
+//Defines validation rules for authentication-related requests
+
 //signin
 export const signInValidation = [
   body('email')
