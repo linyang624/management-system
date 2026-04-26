@@ -157,7 +157,7 @@ export default function HiringManagement() {
           <input
             type="text"
             value={formData.employeeName}
-            placeholder="Alice Chen"
+            placeholder="full name"
             onChange={(event) =>
               setFormData({
                 ...formData,
@@ -174,7 +174,7 @@ export default function HiringManagement() {
           <input
             type="text"
             value={formData.employeeEmail}
-            placeholder="alice@example.com"
+            placeholder=""
             onChange={(event) =>
               setFormData({
                 ...formData,
